@@ -1,0 +1,42 @@
+/* Style Form*/
+.form {
+    outline: 2px solid black;
+    background-color: rgb(235, 235, 235);
+    width: 200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 20px;
+}
+
+/* make the outline of the input boxes black instead of blue */
+.text:focus {
+    outline: 1.5px solid black;
+}
+
+/* center enter form */
+.login-form {
+    margin-left: auto;
+    margin-right: auto;
+    width: 150px;
+}
+
+/* Style submit button */
+#submit {
+    background-color: rgb(255, 206, 0);
+    text-decoration: underline;
+    height: 25px;
+    width: 150px;
+}
+
+/* Style the submit button when user hovers over it */
+#submit:hover {
+    margin-left: auto;
+    margin-right: auto;
+
+    border: 1px solid black;
+    font-weight: bold;
+    height: 25px;
+    width: 150px;
+
+    cursor: pointer;
+}

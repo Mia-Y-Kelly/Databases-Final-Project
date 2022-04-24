@@ -13,13 +13,30 @@
     outline: 1.5px solid black;
 }
 
-/* center enter form */
+/* center contents in the form */
 .login-form {
     margin-left: auto;
     margin-right: auto;
     width: 150px;
 }
 
+/* center password change div */
+.createPwd {
+    outline: 2px solid black;
+    background-color: rgb(235, 235, 235);
+    width: 200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 20px;
+
+}
+
+/* center password change contents and hide visibility */
+.innerPwd {
+	margin-left: auto;
+	margin-right: auto;
+	width: 150px;
+}
 /* Style submit button */
 #submit {
     background-color: rgb(255, 206, 0);

@@ -24,7 +24,8 @@ function authenticate($user, $passwd) {
         $result = $statement->execute();
         $row=$statement->fetch();
         $dbh=null;
-
+	//	print $row[0];
+		
         return $row[0];
     }catch (PDOException $e) {
         print "Error! " . $e->getMessage() . "<br/>";
@@ -33,9 +34,24 @@ function authenticate($user, $passwd) {
 }
 
 // Currently working on detecting if password reset should occur
-function resetPassword($user, $newPass) {
-    $dbh = connectDB();
-    $sql = "SELECT ";
+function isFirstLogin($username) {
+    try {
+		
+		$dbh = connectDB();
+		$sqlstmt = "select username, pwd_set from
+        	                (select stu_acc as username, pwd_set from Student
+            	            union
+                	        select instr_acc as username, pwd_set from Instructor) combined where username = :username";
+		$statement = $dbh->prepare($sqlstmt);		
+		$statement->bindParam("username", $username, PDO::PARAM_STR);
+		$statement->bindValue(":username","%$username%");
+		$executedStmt = $statement.execute();
+		$result = $statement->fetch();
+		$dbh = null;
+		return;
+	} catch (PDOException $e) {
+		print "Error! ". $e->getMessage() . "<br/>";
+		die();
+	}
 }
-
 ?>

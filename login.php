@@ -12,11 +12,12 @@ if (isset($_POST['submit'])) {
         //check the username and passwd, if correct, redirect to main.php page
 
         if (authenticate($_POST['username'], $_POST['password']) == 1){
-//        if($_POST["username"] == "Bob" && $_POST["password"] == "Password1") {
+	     		print_r($_POST['username']);
+				isFirstLogin($_POST['username']);	
                 $_SESSION['username']=$_POST['username'];
                 print_r($_SESSION);
                 print_r($_POST);
-                header("LOCATION:resetpwd.php");
+                //header("LOCATION:resetpwd.php");
                 return;
         } else {
                 echo '<p style=\"color:red\">incorrect username and password</p>';

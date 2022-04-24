@@ -1,34 +1,38 @@
 <?php
-require "db.php";
-session_start();
-echo "<pre>";
-print_r($_SESSION);
-print_r($_POST);
-echo "</pre>";
+    require "db.php";
+    session_start();
+    echo "<pre>";
+    print_r($_SESSION);
+    print_r($_POST);
+    echo "</pre>";
 
-// user clicked the login button
-if (isset($_POST['submit'])) {
-        echo "Submit pressed \n";
-        //check the username and passwd, if correct, redirect to main.php page
+    // user clicked the login button
+    if(isset($_POST['submit'])) 
+    {
+            echo "Submit pressed \n";
 
-        if (authenticate($_POST['username'], $_POST['password']) == 1){
-//        if($_POST["username"] == "Bob" && $_POST["password"] == "Password1") {
+            //check the username and passwd, if correct, redirect to main.php page
+            if (authenticate($_POST['username'], $_POST['password']) == 1)
+            {
                 $_SESSION['username']=$_POST['username'];
                 print_r($_SESSION);
                 print_r($_POST);
                 header("LOCATION:resetpwd.php");
                 return;
-        } else {
+            } 
+            else 
+            {
                 echo '<p style=\"color:red\">incorrect username and password</p>';
                 echo "<pre>";
                 print_r($_POST);
-        }
-}
+            }
+    }
 
-// user clicked the logout button */
-if ( isset($_POST["logout"]) ) {
-   session_destroy();
-}
+    // user clicked the logout button */
+    if ( isset($_POST["logout"]) ) 
+    {
+        session_destroy();
+    }
 ?>
 
 <html>

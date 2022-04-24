@@ -34,7 +34,6 @@ if ( isset($_POST["logout"]) ) {
 <html>
     <link rel="stylesheet" href="login.css">
     <body>
-            <h1>Login</h1>
         <form class="form" action="login.php" method="POST">
             <div class="login-form">
                 <label for="uname" class="label"><b>Username</b></label><br>

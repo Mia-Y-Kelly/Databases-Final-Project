@@ -5,6 +5,23 @@
     // Join the session.
     session_start();
 
+    // Access global variable from within a function.
+    // global $STORED_COURSE_ID;
+
+    print("SUCCESS: You may complete the survey for this course.\n");
+    print_r($_SESSION);
+    print("-------------------------\n");
+    print_r($STORED_COURSE_ID);
+    print("-------------------------\n");
+
+    // When the Student submits the survey, update the completion of the survey and redirect to student.php.
+    if(isset($_POST['submitSurvey'])) 
+    {
+        recordSurveyCompletion($_SESSION['username'], $STORED_COURSE_ID);
+        header("LOCATION:student.php");
+        print("SUCCESS: You have successfully completed the survey for this course.\n");
+    }
+
     // Have the student complete the survey.
     try 
     {
@@ -13,12 +30,8 @@
         $statement = $dbh->prepare($sqlstmt);
         $result = $statement->execute();
         $questions = $statement->fetchAll();
-
-
-        // call createQuestion('MC', 2, "I understand the objectives of this course");
-        // call createChoice(2, 'A', "Strongly agree");
         ?>
-        <form class="survey-form" action="student.php" method="POST">
+        <form class="survey-form" action="survey.php" method="POST">
             <?php
             foreach($questions as $question)
             {
@@ -55,13 +68,5 @@
     {
         print "Error! " . $e->getMessage() . "<br/>";
         die();
-    }
-
-    // When the Student submits the survey, update the completion of the survey and redirect to student.php.
-    if(isset($_POST['submitSurvey'])) 
-    {
-        recordSurveyCompletion($_SESSION['username']);
-        print("SUCCESS: You have successfully completed the survey for this course.");
-        header("LOCATION:student.php");
     }
 ?>

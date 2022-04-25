@@ -1,9 +1,9 @@
 <?php
-require "db.php";
-SESSION_START();
-$course_id = $_SESSION['COURSE_ID'];
-try
-{
+	require "db.php";
+	SESSION_START();
+	$course_id = $_SESSION['COURSE_ID'];
+	try
+	{
         $dbh = connectDB();
         $sqlstmt = "SELECT * FROM Question ORDER BY question_number";
         $statement = $dbh->prepare($sqlstmt);
@@ -44,8 +44,6 @@ try
 	echo("<input type='submit' value='Submit_Survey' name='submitSurvey'>");
     if(isset($_POST['submitSurvey'])) 
 	{
-		// print_r($_POST);
-
 		try
 		{	$course_id = $_SESSION['COURSE_ID'];
 			$dbh = connectDB();
@@ -68,26 +66,33 @@ try
 				$type = strval(gettype($question_choice));
 				
 				//print_r($all_questions[$counter]);	
-				if($counter > count($all_questions) - 1) {
+				if($counter > count($all_questions) - 1) 
+				{
 					break;
 				}
 				$q = $all_questions[$counter];
 				
-				if($type == "boolean") {
+				if($type == "boolean") 
+				{
 					$sql = "INSERT INTO Course_Question_Responses VALUES('$course_id', '$q[1]', '$q[2]', NULL, '$answer')"; 
 					$statement = $dbh->prepare($sql);
 					$result = $statement->execute();
-				} else {
+				} 
+				else 
+				{
 					// Determine if its the first time the MC is inserted
 					$sql = "SELECT * FROM Course_Question_Responses WHERE freq=0 AND choice_string='$answer'";
 					$statement = $dbh->prepare($sql);
 					$result = $statement->execute();
 					$isFirst = $statement->fetch();
-					if($isFirst != 1) {
+					if($isFirst != 1) 
+					{
 						$sql = "INSERT INTO Course_Question_Responses VALUES('$course_id', '$q[1]', '$answer', 1, 'N/A')";
 						$statement = $dbh->prepare($sql);
 						$result = $statement->execute();
-					} else {
+					} 
+					else 
+					{
 						$sql = "UPDATE Course_Question_Responses SET freq = freq + 1 WHERE choice_string='$answer'";
 						$statement = $dbh->prepare($sql);
 						$result = $statement->execute();
@@ -104,10 +109,8 @@ try
        		die();
     	}
 
-	}
-			
+	}		
 		?>
         </form>
-        <?php
-        $dbh=null;
-
+<?php
+$dbh=null;

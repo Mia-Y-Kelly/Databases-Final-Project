@@ -114,7 +114,7 @@
             // First check if the course ID is invalid.
             if(checkStudentCourseID($studentAccount, $courseID) == null)
             {
-                print("Invalid course ID <br/>");
+                print("ERROR: Invalid course ID $courseID<br/>");
                 return;
             }
             else
@@ -174,7 +174,7 @@
 
             if($row[0] == null)
             {
-                print("Invalid course ID <br/>");
+                print("ERROR: Invalid course ID $courseID<br/>");
                 return;
             }
             else
@@ -360,14 +360,11 @@ function isFirstLogin() {
             	print "<p style='color:red;'>Passwords must match</p>";
         	}
         
-			print $user;
-			print $pwd;
         	$statement = $dbh->prepare($sql);
         	$statement->bindParam(":account", $user);
         	$statement->bindParam(":password", $pwd);
 			$result = $statement->execute();
 			$row = $statement->fetch();
-        	print_r($row);
             
 			//Set pwd_set to 1
 			if($isStudent == 1) {

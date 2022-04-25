@@ -1,0 +1,8 @@
+@import "login.css";
+h1 {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	width: 500px;
+	align-text: center;
+}

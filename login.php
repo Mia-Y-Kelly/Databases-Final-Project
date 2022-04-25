@@ -7,22 +7,21 @@
     if (isset($_POST['submit'])) 
     {
         //check the username and passwd, if correct, redirect to main.php page
-        if (authenticate($_POST['username'], $_POST['password']) == 1)
-        {
-            $_SESSION['username']=$_POST['username'];
-			isFirstLogin();		
-            return;
-        } 
-        else 
-        {
-            echo '<p style=\"color:red\">incorrect username and password</p>';
-        }
+        if (authenticate($_POST['username'], $_POST['password']) == 1){
+                $_SESSION['username']=$_POST['username'];
+				isFirstLogin();		
+                return;
+            } 
+            else 
+            {
+				echo '<p style="color:red;" align="center">incorrect username and password</p>';
+            }
     }
 
     // user clicked the logout button */
     if ( isset($_POST["logout"]) ) 
     {
-        session_destroy();
+       SESSION_DESTROY();
     }
 ?>
 

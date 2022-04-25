@@ -6,6 +6,7 @@ drop table if exists Course_Question_Responses;
 drop table if exists Course;
 drop table if exists Student;
 drop table if exists Instructor;
+drop table if exists Choice;
 drop table if exists Question;
 
 drop procedure if exists createInstructor;
@@ -13,6 +14,7 @@ drop procedure if exists createStudent;
 drop procedure if exists updateInstructorPassword;
 drop procedure if exists updateStudentPassword;
 drop procedure if exists createCourse;
+drop procedure if exists createChoice;
 drop procedure if exists createQuestion;
 drop procedure if exists assignInstructor;
 
@@ -62,24 +64,33 @@ create table Question(
 	question_type char(2),
 	question_number int,
 	question varchar(200),
-	choice_char char(1),
-    choice varchar(200),
     
-    primary key(question_number, choice)
+    primary key(question_number)
+);
+
+/*Store all options in this table*/
+create table Choice
+(
+	question_number int,
+	choice_char char(1),
+    choice_string varchar(200),
+    
+    primary key(question_number, choice_string),
+    foreign key(question_number) references Question(question_number)
 );
 
 /* Store all responses to the questions in this table */
 create table Course_Question_Responses (
 	course_id varchar(10),
     question_number int,
-    choice char(200),
+    choice_string char(200),
     freq int default 0,
     essay varchar(255) default null, 
     
-    primary key(course_id, question_number, choice),
+    primary key(course_id, question_number, choice_string),
     
     foreign key (course_id) references Course(course_id),
-    foreign key (question_number, choice) references Question(question_number, choice)
+    foreign key (question_number, choice_string) references Choice(question_number, choice_string)
 );
 
 
@@ -144,8 +155,16 @@ delimiter ;
 
 -- createQuestion procedure
 delimiter //
-create procedure createQuestion(question_type char(2), question_number int, question varchar(200), choice_char char(1), choice varchar(200))
+create procedure createQuestion(question_type char(2), question_number int, question varchar(200))
 	begin
-		insert into Question values(question_type, question_number, question, choice_char, choice);
+		insert into Question values(question_type, question_number, question);
+	end//
+delimiter ;
+
+-- createChoice procedure
+delimiter //
+create procedure createChoice(question_number int, choice_char char(1), choice varchar(200))
+	begin
+		insert into Choice values(question_number, choice_char, choice);
 	end//
 delimiter ;

@@ -3,6 +3,7 @@
 use annikapr;
 
 -- Clear Student table
+delete from Choice limit 100;
 delete from Question limit 100;
 delete from Takes limit 100;
 delete from Course limit 10;
@@ -30,19 +31,21 @@ call createCourse("CS1131", "Accelerated Introduction to Programming", 3);
 call createCourse("CS1142", "Programming at the HW/SW Interface", 3);
 
 -- Add Questions.
-call createQuestion('MC', 1, "The pace of this course is", 'A', "Too slow");
-call createQuestion('MC', 1, "The pace of this course is", 'B', "Too fast");
-call createQuestion('MC', 1, "The pace of this course is", 'C', "Just right");
+call createQuestion('MC', 1, "The pace of this course is");
+call createChoice(1, 'A', "Too slow");
+call createChoice(1, 'B', "Too fast");
+call createChoice(1, 'C', "Just right");
 
-call createQuestion('MC', 2, "I understand the objectives of this course", 'A', "Strongly agree");
-call createQuestion('MC', 2, "I understand the objectives of this course", 'B', "Agree");
-call createQuestion('MC', 2, "I understand the objectives of this course", 'C', "Neutral");
-call createQuestion('MC', 2, "I understand the objectives of this course", 'D', "Disagree");
-call createQuestion('MC', 2, "I understand the objectives of this course", 'E', "Strongly disagree");
+call createQuestion('MC', 2, "I understand the objectives of this course");
+call createChoice(2, 'A', "Strongly agree");
+call createChoice(2, 'B', "Agree");
+call createChoice(2, 'C', "Neutral");
+call createChoice(2, 'D', "Disagree");
+call createChoice(2, 'E', "Strongly disagree");
 
-call createQuestion('FR', 3, "What did you enjoy about this course?", "", "");
+call createQuestion('FR', 3, "What did you enjoy about this course?");
 
-call createQuestion('FR', 4, "Any suggestions to improve this course?", "", "");
+call createQuestion('FR', 4, "Any suggestions to improve this course?");
 
 -- TBH I'M NOT SURE IF I HAD TO DO THIS STEP
 -- grant select, insert, update, delete on Student to 'mykelly'@'%';

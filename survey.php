@@ -9,11 +9,14 @@
     try 
     {
         $dbh = connectDB();
-        $sqlstmt = "SELECT * FROM Question";
+        $sqlstmt = "SELECT * FROM Question ORDER BY question_number";
         $statement = $dbh->prepare($sqlstmt);
         $result = $statement->execute();
         $questions = $statement->fetchAll();
 
+
+        // call createQuestion('MC', 2, "I understand the objectives of this course");
+        // call createChoice(2, 'A', "Strongly agree");
         ?>
         <form class="survey-form" action="student.php" method="POST">
             <?php
@@ -21,31 +24,25 @@
             {
                 echo("<p>$question[1]. $question[2]</p>"); 
 
-                if($question[0] = "MC")
+                if($question[0] == "MC")
                 {
-                    $sqlstmt = "SELECT * FROM Question WHERE question_number = $question[1]";
+                    $sqlstmt = "SELECT * FROM Choice WHERE question_number = $question[1] ORDER BY choice_char";
                     $statement = $dbh->prepare($sqlstmt);
                     $result = $statement->execute();
                     $choices = $statement->fetchAll();
                     foreach($choices as $choice)
                     {
-                        ?>
-                        <input type="radio" id="multipleChoice" name="multipleChoice" value="multipleChoice">
-                        <label for="multipleChoice">
-                            <?php>
-                                echo("$choice[3]: $choice[4]");
-                            ?>
-                        </label><br>
-                        <?php
+                        echo("<input type='radio' id='multipleChoice' name=" . $choice[1] . "value=" . $choice[2] . ">");
+                        echo("<label for='multipleChoice'>" . $choice[1]. ": ". $choice[2] . "</label><br>");
                     }
                 }
-                else if($question[0] = "FR")
+                else if($question[0] == "FR")
                 {
-                    ?>
-                    <input type="text" id="freeResponse" name="freeResponse"><br>
-                    <?php
+                    echo("<input type='text' id='freeResponse' name=" . $question[1] . "<br>");
                 }
             }
+
+            echo("<input type='submit' value='Submit Survey' name='submitSurvey'>");
             ?>
         </form>
         <?php

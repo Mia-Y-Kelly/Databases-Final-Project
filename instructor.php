@@ -1,83 +1,8 @@
 <?php
-<<<<<<< HEAD
-    // Require database functionality.
-    require "db.php";
-
-    // Join the session.
-    session_start();
-
-    // Instructor clicked the List Enrolled Students button.
-    if(isset($_POST['listStudents'])) 
-    {
-            echo "List Enrolled Students pressed \n";
-
-            // Check the course ID; if correct, show the class roster.
-            if (checkInstructorCourseID($_SESSION['username'], $_POST['courseID']) == 1)
-            {
-                print_r($_SESSION);
-                print_r($_POST);
-                listClassRoster($_POST['courseID']);
-                return;
-            } 
-            else 
-            {
-                echo '<p style=\"color:red\">Invalid course ID</p>';
-                echo "<pre>";
-                print_r($_POST);
-            }
-    }
-
-    // Instructor clicked the See Course Evaluation Result button.
-    if(isset($_POST['listStudents'])) 
-    {
-            echo "List Enrolled Students pressed \n";
-
-            // Check the course ID; if correct, show the class roster.
-            if (checkInstructorCourseID($_SESSION['username'], $_POST['courseID']) == 1)
-            {
-                print_r($_SESSION);
-                print_r($_POST);
-                courseEvaluations($_POST['courseID']);
-                return;
-            } 
-            else 
-            {
-                echo '<p style=\"color:red\">Invalid course ID</p>';
-                echo "<pre>";
-                print_r($_POST);
-            }
-    }
-=======
-    require "db.php";
-	session_start();
->>>>>>> 8a5698244366148239faef734d4487495c956f17
+	require "db.php";
+	SESSION_START();
 ?>
-
 <html>
-    <body>
-<<<<<<< HEAD
-        <form class="form" action="instructor.php" method="POST">
-            <div class="list-students-form">
-            <label for="courseID" class="label"><b>Enter a Valid Course ID</b></label><br>
-                <input type="text" id="courseID" name="courseID" class="text" value="" require>
-                <br><br>
-
-                <input type="submit" id="listStudents" name="listStudents" value="List Enrolled Students">
-            </div>
-        </form>
-
-        <form class="form" action="instructor.php" method="POST">
-            <div class="evaluation-result-form">
-            <label for="courseID" class="label"><b>Enter a Valid Course ID</b></label><br>
-                <input type="text" id="courseID" name="courseID" class="text" value="" require>
-                <br><br>
-                
-                <input type="submit" id="evaluationResult" name="evaluationResult" value="See Course Evaluation Result">
-            </div>
-        </form>
-    </body>
-</html>
-=======
         <form action="login.php" method="post">
             <?php
                 if (!isset($_SESSION['username'])) {
@@ -180,7 +105,7 @@
 						// var_dump($all_q);
 
 						// Retrive choices and frequencies
-						$questions = $dbh->prepare("SELECT question_number, choice_string, freq from Course_Question_Responses WHERE course_id='$class' AND essay='';");
+						$questions = $dbh->prepare("SELECT question_number, choice_string, freq from Course_Question_Responses WHERE course_id='$class' AND essay='N/A';");
 						$question_result = $questions->execute();						
 						$questions_arr = $questions->fetchAll();
 						$question_total_responses[] = 1;
@@ -211,7 +136,7 @@
 						
 
 						// Retrive essay questions
-						$questions = $dbh->prepare("SELECT question_number, essay from Course_Question_Responses WHERE course_id='$class' AND essay!='';");
+						$questions = $dbh->prepare("SELECT question_number, essay from Course_Question_Responses WHERE course_id='$class' AND essay!='N/A';");
                         $question_result = $questions->execute();
                         $essay = $questions->fetchAll();
 						
@@ -261,4 +186,3 @@
     </body>
 </html>
 
->>>>>>> 8a5698244366148239faef734d4487495c956f17

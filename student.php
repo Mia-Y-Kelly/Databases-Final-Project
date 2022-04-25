@@ -25,12 +25,15 @@
     // Student clicked the Take Course Survey button.
     if(isset($_POST['takeSurvey']))
     {
-        // Determine whether the Student can take the survey.
+		// Determine whether the Student can take the survey.
         if(checkStudentCanTakeSurvey($_SESSION['username'], $_POST['surveyCourseID']) == TRUE)
         {
-            // $STORED_COURSE_ID = $_POST['surveyCourseID'];
-            // header("LOCATION:survey.php");
-            completeSurvey($_SESSION['username'], $_POST['surveyCourseID']);
+            $_SESSION['COURSE_ID']= $_POST['surveyCourseID'];
+            header("LOCATION:survey.php");
+			//print_r($_POST);
+			completeSurvey($_SESSION['username'], $_POST['surveyCourseID']);
+			print "After completeSurvery";
+			print_r($_POST);
             recordSurveyCompletion($_SESSION['username'], $_POST['surveyCourseID']);
             print("SUCCESS: You have successfully completed the survey for this course.\n");
         }

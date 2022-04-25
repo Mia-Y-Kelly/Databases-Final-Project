@@ -74,7 +74,7 @@ function isStudent() {
 		$result = $statement->execute();
 		$row = $statement->fetch();
 		$dbh = null;
-		return $row[0] ?? NULL;
+		return $row;
 	} catch(PDOException $e) {
             print "Error: ". $e->getMessage() . "<br/>";
             die();
@@ -85,31 +85,25 @@ function isStudent() {
 function resetPwd($user, $pwd, $pwd2){
         try {
 			$dbh = connectDB();
-        	echo "1";
         	$isStudent = isStudent();
-        	echo "2";
         
 			// If it is a student and the passwords match; change pwd
-			if($isStudent == 1 && ($pwd == $pwd2)) {
+			if($isStudent != NULL && ($pwd == $pwd2)) {
 				$sql = "UPDATE Student SET stu_pwd=sha2(:password, 256) WHERE stu_acc = :account";
-			} else if ($isStudent != 1 && ($pwd == $pwd2)){
+			} else if ($isStudent == NULL && ($pwd == $pwd2)){
 				//If it is an instructor and the passwords match; change pwd
             	$sql = "UPDATE Instructor SET instr_pwd=sha2(:password, 256) WHERE instr_acc = :account";
         	} else {
             	print "<p style='color:red;'>Passwords must match</p>";
         	}
         
-			echo "3";
 			print $user;
 			print $pwd;
         	$statement = $dbh->prepare($sql);
         	$statement->bindParam(":account", $user);
         	$statement->bindParam(":password", $pwd);
-        	print "3.5";
 			$result = $statement->execute();
-        	print "3.75";
 			$row = $statement->fetch();
-        	echo "4";
         	print_r($row);
 			$dbh=null;
 			header("LOCATION:main.php");

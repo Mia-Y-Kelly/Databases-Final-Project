@@ -1,85 +1,10 @@
 <?php
-<<<<<<< HEAD
-    // Require database functionality.
-    require "db.php";
-
-    // Join the session.
-    session_start();
-
-    // Instructor clicked the List Enrolled Students button.
-    if(isset($_POST['listStudents'])) 
-    {
-            echo "List Enrolled Students pressed \n";
-
-            // Check the course ID; if correct, show the class roster.
-            if (checkInstructorCourseID($_SESSION['username'], $_POST['courseID']) == 1)
-            {
-                print_r($_SESSION);
-                print_r($_POST);
-                listClassRoster($_POST['courseID']);
-                return;
-            } 
-            else 
-            {
-                echo '<p style=\"color:red\">Invalid course ID</p>';
-                echo "<pre>";
-                print_r($_POST);
-            }
-    }
-
-    // Instructor clicked the See Course Evaluation Result button.
-    if(isset($_POST['listStudents'])) 
-    {
-            echo "List Enrolled Students pressed \n";
-
-            // Check the course ID; if correct, show the class roster.
-            if (checkInstructorCourseID($_SESSION['username'], $_POST['courseID']) == 1)
-            {
-                print_r($_SESSION);
-                print_r($_POST);
-                courseEvaluations($_POST['courseID']);
-                return;
-            } 
-            else 
-            {
-                echo '<p style=\"color:red\">Invalid course ID</p>';
-                echo "<pre>";
-                print_r($_POST);
-            }
-    }
-=======
-	// View class roster
-	// View survery results
     require "db.php";
 	session_start();
->>>>>>> issue1
 ?>
 
 <html>
     <body>
-<<<<<<< HEAD
-        <form class="form" action="instructor.php" method="POST">
-            <div class="list-students-form">
-            <label for="courseID" class="label"><b>Enter a Valid Course ID</b></label><br>
-                <input type="text" id="courseID" name="courseID" class="text" value="" require>
-                <br><br>
-
-                <input type="submit" id="listStudents" name="listStudents" value="List Enrolled Students">
-            </div>
-        </form>
-
-        <form class="form" action="instructor.php" method="POST">
-            <div class="evaluation-result-form">
-            <label for="courseID" class="label"><b>Enter a Valid Course ID</b></label><br>
-                <input type="text" id="courseID" name="courseID" class="text" value="" require>
-                <br><br>
-                
-                <input type="submit" id="evaluationResult" name="evaluationResult" value="See Course Evaluation Result">
-            </div>
-        </form>
-    </body>
-</html>
-=======
         <form action="login.php" method="post">
             <?php
                 if (!isset($_SESSION['username'])) {
@@ -121,7 +46,6 @@
         	<?php 
 				if(isset($_POST['show_roster'])){
 					try {
-						var_dump($_POST);
 						$class = $_POST['current_class'];
 						$dbh = connectDB();
 						$statement = $dbh->prepare("SELECT stu_acc, course_id FROM Takes where course_id='$class';");
@@ -131,12 +55,12 @@
 						
 						
 						// Print out all the names in a list
-						//echo "<ul>";
-						//foreach($rows as $name) {
-						//	echo "<li>$name</li>";
-						//}
-					//	echo "</ul>";
-						
+						echo "<ul>";
+						foreach($rows as $name) {
+							echo "<li>$name</li>";
+						}
+						echo "</ul>";
+						return;	
 	                } catch (PDOException $e) {
                         print "<br/>ERROR: ". $e->getMessage()."<br/>";
                         die();
@@ -144,7 +68,9 @@
 				}
 			?>
 		</form>
-		<form id="survey" name="survey" method="instructor.php" method="post">
+		
+		<!--Show survey results -->
+		<form id="survey" name="survey" method="post" method="instructor.php">
             <p>View Courses Results</p>
             <select Emp Name='current_survey'>
             <option value="">--- Select Class ---</option>
@@ -157,7 +83,8 @@
                         $result = $statement->execute();
                         $row = $statement->fetchAll(PDO::FETCH_COLUMN);
                         $dbh = null;
-                        // Iterating through the product array
+                        
+						// Iterating through the product array
                         foreach($row as $item){
                             echo "<option value='$item'>$item</option>";
                         }
@@ -167,7 +94,42 @@
                 }
             ?>
                 <input type="submit" id="show_survey_results" name="show_survey_results" value="Show Results" />
+			<?php
+                if(isset($_POST['show_survey_results'])){
+                    try {
+						$class = $_POST['current_survey'];
+						$dbh = connectDB();
+						
+						// Retrieve choices
+                        $questions = $dbh->prepare("SELECT choice FROM Course_Question_Responses WHERE course_id='$class' AND essay = '';");
+                        $question_result = $questions->execute();
+                        $question_choice = $questions->fetchAll(PDO::FETCH_COLUMN);
+                        	
+						// Retrieve frequencies
+						$questions = $dbh->prepare("SELECT freq FROM Course_Question_Responses WHERE course_id='$class' AND essay = '';");
+						$question_result = $questions->execute();
+						$question_freq = $questions->fetchAll(PDO::FETCH_COLUMN);
+						$freq_total = array();
+						// Change all the strings to numbers
+						foreach()	
+						$dbh = null;
+						var_dump($question_choice);
+						print "<br/>";
+						var_dump($question_freq);
+						print "<br/>";
+                        // Print out all the names in a list
+                        echo "<ul>";
+                        foreach($question_choice as $choice) {
+                      	    echo "<li>$choice</li>";
+                        }
+                        echo "</ul>";
+
+                    } catch (PDOException $e) {
+                        print "<br/>ERROR: ". $e->getMessage()."<br/>";
+                        die();
+                    }
+                }
+            ?>
 		</form>
     </body>
 </html>
->>>>>>> issue1

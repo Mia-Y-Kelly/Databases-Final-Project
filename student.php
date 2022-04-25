@@ -9,7 +9,7 @@
     if(isset($_POST['register'])) 
     {
         // Check the course ID; if correct, redirect to the same page so the user may register for more courses.
-        if(registerForCourse($_SESSION['username'], $_POST['courseID']) == 1)
+        if(registerForCourse($_SESSION['username'], $_POST['registerCourseID']) == 1)
         {
             header("LOCATION:student.php");
         } 
@@ -25,8 +25,8 @@
     // Student clicked the Take Course Survey button.
     if(isset($_POST['takeSurvey']))
     {
-        // Check the course ID; if correct, let the Student take the survey.
-        if(checkStudentCourseID($_SESSION['username'], $_POST['courseID']) == 1)
+        // Check whether the Student can take the survey for the specified course.
+        if(checkCanCompleteSurvey($_SESSION['username'], $_POST['surveyCourseID']) == TRUE)
         {
             header("LOCATION:survey.php");
         }
@@ -37,8 +37,8 @@
     <body>
         <form class="form" action="student.php" method="POST">
             <div class="register-form">
-                <label for="courseID" class="label"><b>Register for Course ID</b></label><br>
-                <input type="text" id="courseID" name="courseID" class="text" value="" require>
+                <label for="registerCourseID" class="label"><b>Register for Course ID</b></label><br>
+                <input type="text" id="registerCourseID" name="registerCourseID" class="text" value="" require>
                 <br><br>
 
                 <input type="submit" id="register" name="register" value="Register">
@@ -51,10 +51,10 @@
             </div>
         </form>
 
-        <form class="form" action="survey.php" method="POST">
+        <form class="form" action="student.php" method="POST">
             <div class="take-survey-form">
-                <label for="courseID" class="label"><b>Take Survey for a Course ID</b></label><br>
-                <input type="text" id="courseID" name="courseID" class="text" value="" require>
+                <label for="surveyCourseID" class="label"><b>Take Survey for a Course ID</b></label><br>
+                <input type="text" id="surveyCourseID" name="surveyCourseID" class="text" value="" require>
                 <br><br>
 
                 <input type="submit" id="takeSurvey" name="takeSurvey" value="Take Course Survey">

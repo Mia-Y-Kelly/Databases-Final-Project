@@ -114,7 +114,7 @@
             // First check if the course ID is invalid.
             if(checkStudentCourseID($studentAccount, $courseID) == null)
             {
-                print("Invalid course ID <br/>");
+                print("ERROR: Invalid course ID $courseID.");
                 return;
             }
             else
@@ -174,7 +174,7 @@
 
             if($row[0] == null)
             {
-                print("Invalid course ID <br/>");
+                print("ERROR: Invalid course ID $courseID");
                 return;
             }
             else
@@ -285,16 +285,18 @@
     }
 
     // Record the date and time at which a Student completed the survey.
-    function recordSurveyCompletion($studentAccount)
+    function recordSurveyCompletion($studentAccount, $courseID)
     {
         try 
         {
             $dbh = connectDB();
-            $sqlstmt = "UPDATE Takes SET survey_completion = date() ";
+            echo("Trying to record survey completion");
+            $sqlstmt = "UPDATE Takes SET survey_completion = CURRENT_TIMESTAMP()";
 
             $statement = $dbh->prepare($sqlstmt.
-                                        " where stu_acc = :studentAccount");
+                                        " where stu_acc = :studentAccount and course_id = :courseID");
             $statement->bindParam(":studentAccount", $studentAccount);
+            $statement->bindParam(":courseID", $courseID);
             $result = $statement->execute();
             $rows=$statement->fetch();
             $dbh=null;
@@ -390,4 +392,40 @@ function resetPwd($user, $pwd, $pwd2){
 		}
 	return;
 }
+
+    // Determine whether a student can take a course survey
+    function checkCanCompleteSurvey($studentAccount, $courseID)
+    {
+        try
+        {
+            $dbh = connectDB();
+            $sqlstmt = "SELECT * FROM Takes ";
+
+            $statement = $dbh->prepare($sqlstmt.
+                                        " where stu_acc = :studentAccount and course_id = :courseID");
+            $statement->bindParam(":studentAccount", $studentAccount);
+            $statement->bindParam(":courseID", $courseID);
+            $result = $statement->execute();
+            $row=$statement->fetch();
+
+            if($row == null)
+            {
+                print("ERROR: Invalid course ID $courseID.");
+                return FALSE;
+            }
+            else if($row[2] != null)
+            {
+                print("ERROR: You have already completed the survey for course $courseID at $row[2].");
+                return FALSE;
+            }
+
+            $dbh=null;
+            return TRUE;
+        }
+        catch (PDOException $e) 
+        {
+            print "Error! " . $e->getMessage() . "<br/>";
+            die();
+        }
+    }
 ?>

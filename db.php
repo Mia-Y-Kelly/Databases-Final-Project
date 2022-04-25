@@ -51,7 +51,7 @@ function isFirstLogin() {
 			header("LOCATION:resetpwd.php");			
 			return;
 		} else {
-			header("LOCATION:main.php");
+			header("LOCATION:instructor.php");
 		}
 		
 		$dbh = null;

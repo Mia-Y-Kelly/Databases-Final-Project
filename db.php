@@ -61,8 +61,8 @@
 
             if($row[0] == null)
             {
-                print("Invalid course ID <br/>")
-                return 0;
+                print("Invalid course ID <br/>");
+                return;
             }
             else
             {

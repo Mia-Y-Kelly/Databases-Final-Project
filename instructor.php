@@ -100,30 +100,36 @@
 						$class = $_POST['current_survey'];
 						$dbh = connectDB();
 						
-						// Retrieve choices
-                        $questions = $dbh->prepare("SELECT choice FROM Course_Question_Responses WHERE course_id='$class' AND essay = '';");
-                        $question_result = $questions->execute();
-                        $question_choice = $questions->fetchAll(PDO::FETCH_COLUMN);
-                        	
-						// Retrieve frequencies
-						$questions = $dbh->prepare("SELECT freq FROM Course_Question_Responses WHERE course_id='$class' AND essay = '';");
+						// Retrieve questions
+						$questions = $dbh->prepare("SELECT question_number, question FROM Question;");
 						$question_result = $questions->execute();
-						$question_freq = $questions->fetchAll(PDO::FETCH_COLUMN);
-						$freq_total = array();
-						// Change all the strings to numbers
-						foreach()	
-						$dbh = null;
-						var_dump($question_choice);
-						print "<br/>";
-						var_dump($question_freq);
-						print "<br/>";
-                        // Print out all the names in a list
-                        echo "<ul>";
-                        foreach($question_choice as $choice) {
-                      	    echo "<li>$choice</li>";
-                        }
-                        echo "</ul>";
+						$all_q = $questions->fetch();
 
+						// Retrive choices and frequencies
+						$questions = $dbh->prepare("SELECT question_number, choice, freq from Course_Question_Responses WHERE course_id='$class' AND essay='';");
+						$question_result = $questions->execute();						
+						$questions_arr = $questions->fetchAll();
+						$question_total_response[] = 1;
+						$counter = 0;
+						
+						// Calculate total frequency per question
+						foreach($questions_arr as $q) {
+						}
+						// Print all the question
+						echo "<table/><tr><th>Response Option</th><th>Frequency</th></tr>";
+						foreach($questions_arr as $q) {
+							echo "<tr><td>".$q[1]."</td><td>".$q[2]."</td></tr>";
+						}
+						echo "</table>";
+						// Debug
+						//var_dump($questions_arr);
+						print "<br/>num ";
+						var_dump($questions_arr[0]);
+						print "<br/>choices ";
+						var_dump($questions_arr[1]);	
+						print "<br/>freqs ";
+						var_dump($questions_arr[2]);
+						
                     } catch (PDOException $e) {
                         print "<br/>ERROR: ". $e->getMessage()."<br/>";
                         die();

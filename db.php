@@ -110,16 +110,9 @@
             die();
         }
     }
-
-    // Currently working on detecting if password reset should occur
-    function resetPassword($user, $newPass) 
-    {
-        $dbh = connectDB();
-        $sql = "SELECT ";
-    }
-
-    // Determine whether a Student has registered for a course with a valid course_id.
-    function checkStudentCourseID($studentAccount, $courseID)
+    
+	// Determine whether a student has registered for a course with a valid course_id
+	function checkStudentCourseID($studentAccount, $courseID)
     {
         try
         {
@@ -380,7 +373,11 @@ function isFirstLogin() {
 			header("LOCATION:resetpwd.php");			
 			return;
 		} else {
-			header("LOCATION:instructor.php");
+			if(isStudent($_POST['username']) == 1) {
+				header("LOCATION:student.php");
+			} else {
+				header("LOCATION:instructor.php");
+			}
 		}
 		
 		$dbh = null;
@@ -392,24 +389,6 @@ function isFirstLogin() {
 	}
 }
 
-
-function isStudent() {
-	try {
-
-		$acc = $_POST['username'];
-		$dbh = connectDB();
-		$sql = "SELECT stu_acc FROM Student WHERE stu_acc = '$acc'";
-		$statement = $dbh->prepare($sql);
-		$result = $statement->execute();
-		$row = $statement->fetch();
-		$dbh = null;
-		return $row;
-	} catch(PDOException $e) {
-            print "Error: ". $e->getMessage() . "<br/>";
-            die();
-    }
-
-}
 
 function resetPwd($user, $pwd, $pwd2){
         try {

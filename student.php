@@ -41,8 +41,13 @@
     // Student clicked the Take Course Survey button.
     if(isset($_POST['takeSurvey']))
     {
+<<<<<<< HEAD
 		// Determine whether the Student can take the survey.
         if(checkStudentCanTakeSurvey($_SESSION['username'], $_POST['surveyCourseID']) == TRUE)
+=======
+        // Check whether the Student can take the survey for the specified course.
+        if(checkCanCompleteSurvey($_SESSION['username'], $_POST['surveyCourseID']) == TRUE)
+>>>>>>> main
         {
             $_SESSION['COURSE_ID']= $_POST['surveyCourseID'];
             header("LOCATION:survey.php");
@@ -70,6 +75,10 @@
                 <input type="submit" id="checkSurveyStatus" name="checkSurveyStatus" value="Check Survey Status">
             </div>
         </form>
+<<<<<<< HEAD
+=======
+
+>>>>>>> main
         <form class="form" action="student.php" method="POST">
             <div class="take-survey-form">
                 <label for="surveyCourseID" class="label"><b>Take Survey for a Course ID</b></label><br>

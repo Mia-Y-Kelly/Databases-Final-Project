@@ -21,6 +21,7 @@
                 }
             ?>
 		</form>
+
 		<form id="roster" name="roster" method="post" action="instructor.php">  
 			<p>View Class Roster</p>
 			<select Emp Name='current_class'>  
@@ -70,9 +71,9 @@
 				}
 			?>
 		</form>
-		<form id="survey-container" name="survey-container" action="post" method="/instructor.php">
+		<form id="survey" name="survey" method="instructor.php" method="post">
             <p>View Courses Results</p>
-            <select Emp Name='current_class'>
+            <select Emp Name='current_survey'>
             <option value="">--- Select Class ---</option>
             <?php
                 try {
@@ -93,30 +94,6 @@
                 }
             ?>
                 <input type="submit" id="show_survey_results" name="show_survey_results" value="Show Results" />
-            <?php
-                if(isset($_POST['show_survey_results'])){
-                    try {
-                        $class = $_POST['current_class'];
-                        $dbh = connectDB();
-                        //$questions = $dbh->prepare("SELECT * FROM Course_Has_Responses where course_id='$class';");
-                        //$question_result = $questions->execute();
-                        //$question_rows = $questions->fetchAll(PDO::FETCH_COLUMN);
-                        $dbh = null;
-
-
-                        // Print out all the names in a list
-                        //echo "<ul>";
-                        //foreach($rows as $name) {
-                        //    echo "<li>$name</li>";
-                       // }
-                       // echo "</ul>";
-
-                    } catch (PDOException $e) {
-                        print "<br/>ERROR: ". $e->getMessage()."<br/>";
-                        die();
-                    }
-                }
-            ?>
 		</form>
     </body>
 </html>

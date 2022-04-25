@@ -364,10 +364,6 @@ function isFirstLogin() {
         	$statement->bindParam(":account", $user);
         	$statement->bindParam(":password", $pwd);
 			$result = $statement->execute();
-<<<<<<< HEAD
-=======
-			$row = $statement->fetch();
->>>>>>> annika-4-25-2am
             
 			//Set pwd_set to 1
 			if($isStudent == 1) {

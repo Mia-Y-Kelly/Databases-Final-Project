@@ -15,9 +15,36 @@
             if (authenticate($_POST['username'], $_POST['password']) == 1)
             {
                 $_SESSION['username']=$_POST['username'];
+                $_SESSION['password']=$_POST['password'];
                 print_r($_SESSION);
                 print_r($_POST);
-                header("LOCATION:resetpwd.php");
+
+                // Check whether the user is a Student or Instructor.
+                if(isStudent($_SESSION['username']))
+                {
+                    header("LOCATION:student.php");
+                }
+                else
+                {
+                    header("LOCATION:instructor.php");
+                }
+
+                // if(checkFirstLogin($_SESSION['username'], $_SESSION['password']) == 0)
+                // {
+                //     header("LOCATION:resetpwd.php");
+                // }
+                // else
+                // {
+                //     // Check whether the user is a Student or Instructor.
+                //     if(isStudent($_SESSION['username']))
+                //     {
+                //         header("LOCATION:student.php");
+                //     }
+                //     else
+                //     {
+                //         header("LOCATION:instructor.php");
+                //     }
+                // }
                 return;
             } 
             else 

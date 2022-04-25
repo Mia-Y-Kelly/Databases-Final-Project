@@ -1,3 +1,21 @@
+use annikapr;
+
+drop table if exists Teaches;
+drop table if exists Takes;
+drop table if exists Course_Question_Responses;
+drop table if exists Course;
+drop table if exists Student;
+drop table if exists Instructor;
+drop table if exists Question;
+
+drop procedure if exists createInstructor;
+drop procedure if exists createStudent;
+drop procedure if exists updateInstructorPassword;
+drop procedure if exists updateStudentPassword;
+drop procedure if exists createCourse;
+drop procedure if exists createQuestion;
+drop procedure if exists assignInstructor;
+
 /* Create Table SQL Statements */
 create table Student (
 	stu_acc varchar(20) primary key,
@@ -32,7 +50,7 @@ create table Teaches(
 create table Takes (
 	stu_acc varchar(20),
     course_id varchar(10),
-	survery_completion timestamp,
+	survey_completion timestamp,
     
     primary key(stu_acc, course_id),
     foreign key (stu_acc) references Student(stu_acc),
@@ -115,6 +133,7 @@ create procedure updateInstructorPassword(update_intr_acc varchar(30), new_passw
 		end if;	        
     end//
 delimiter ;
+
 -- createCourse procedure
 delimiter //
 create procedure createCourse(course_id varchar(10), title varchar(50), credits integer)

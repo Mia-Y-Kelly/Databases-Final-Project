@@ -109,26 +109,48 @@
 						$questions = $dbh->prepare("SELECT question_number, choice, freq from Course_Question_Responses WHERE course_id='$class' AND essay='';");
 						$question_result = $questions->execute();						
 						$questions_arr = $questions->fetchAll();
-						$question_total_response[] = 1;
-						$counter = 0;
+						$question_total_responses[] = 1;
+						$counter = 1;
+						$total =0;
 						
 						// Calculate total frequency per question
-						foreach($questions_arr as $q) {
+						for($i = 0; $i < count($questions_arr); $i++) {
+							// Add to total frequency
+							$q = $questions_arr[$i];
+							if($q[0] == $counter) {
+								$total = $total + $q[2];
+							} else {
+								// Push total
+								array_push($question_total_responses, $total);
+								
+								// Start summing new frequency
+								$total = 0;
+								$total = $total + $q[2];
+								$counter++;
+							}
+								
 						}
+						
+						// Push last element in the array
+						array_push($question_total_responses, $total);	
+						array_shift($question_total_responses); 	// This was set to 1 to create array but is not needed anymore
+						var_dump($question_total_responses);
+						
 						// Print all the question
-						echo "<table/><tr><th>Response Option</th><th>Frequency</th></tr>";
+						echo "<table/><tr><th>Response Option</th><th>Frequency</th><th>Percent</th></tr>";
 						foreach($questions_arr as $q) {
-							echo "<tr><td>".$q[1]."</td><td>".$q[2]."</td></tr>";
+							$freq = round((($q[2] / $question_total_responses[$q[0] - 1]) * 100), 0);
+							echo "<tr><td>".$q[1]."</td><td>".$q[2]."</td><td>".$freq.".00%<td></tr>";
 						}
 						echo "</table>";
 						// Debug
-						//var_dump($questions_arr);
-						print "<br/>num ";
-						var_dump($questions_arr[0]);
-						print "<br/>choices ";
-						var_dump($questions_arr[1]);	
-						print "<br/>freqs ";
-						var_dump($questions_arr[2]);
+						//var_dump($questions_arr)
+						$counter = 0;
+						foreach($questions_arr as $q) {
+							print "<br/>";
+                        	var_dump($questions_arr[$counter]);
+							$counter++;
+						}
 						
                     } catch (PDOException $e) {
                         print "<br/>ERROR: ". $e->getMessage()."<br/>";

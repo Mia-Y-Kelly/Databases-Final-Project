@@ -290,7 +290,7 @@
         try 
         {
             $dbh = connectDB();
-            $sqlstmt = "UPDATE Takes SET survey_completion = date() ";
+            $sqlstmt = "UPDATE Takes SET survey_completion = CURRENT_TIMESTAMP()";
 
             $statement = $dbh->prepare($sqlstmt.
                                         " where stu_acc = :studentAccount");
@@ -344,7 +344,7 @@ function isFirstLogin() {
 }
 
 
-function resetPwd($user, $pwd, $pwd2){
+    function resetPwd($user, $pwd, $pwd2){
         try {
 			$dbh = connectDB();
         	$isStudent = isStudent($user);
@@ -390,4 +390,40 @@ function resetPwd($user, $pwd, $pwd2){
 		}
 	return;
 }
+
+    // Determine whether a Student can take the survey.
+    function checkStudentCanTakeSurvey($studentAccount, $courseID)
+    {
+        try 
+        {
+            $dbh = connectDB();
+            $sqlstmt = "SELECT * FROM Takes ";
+
+            $statement = $dbh->prepare($sqlstmt.
+                                        " WHERE stu_acc = :studentAccount AND course_id = :courseID");
+            $statement->bindParam(":studentAccount", $studentAccount);
+            $statement->bindParam(":courseID", $courseID);
+            $result = $statement->execute();
+            $row=$statement->fetch();
+            $dbh=null;
+
+            if($row == null)
+            {
+                print("ERROR: Invalid course ID $courseID");
+                return FALSE;
+            }
+            else if($row[2] != null)
+            {
+                print("ERROR: You have already completed the survey for $courseID at $row[2]");
+                return FALSE;
+            }
+
+            return TRUE;
+        }
+        catch (PDOException $e) 
+        {
+            print "Error! " . $e->getMessage() . "<br/>";
+            die();
+        }
+    }
 ?>

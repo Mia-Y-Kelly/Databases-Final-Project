@@ -13,10 +13,6 @@
         $statement = $dbh->prepare($sqlstmt);
         $result = $statement->execute();
         $questions = $statement->fetchAll();
-
-
-        // call createQuestion('MC', 2, "I understand the objectives of this course");
-        // call createChoice(2, 'A', "Strongly agree");
         ?>
         <form class="survey-form" action="student.php" method="POST">
             <?php

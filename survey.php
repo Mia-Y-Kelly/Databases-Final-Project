@@ -1,4 +1,5 @@
 <?php
+    /*
     // Require database functionality.
     require "db.php";
 
@@ -11,13 +12,13 @@
     print("SUCCESS: You may complete the survey for this course.\n");
     print_r($_SESSION);
     print("-------------------------\n");
-    print_r($STORED_COURSE_ID);
+    // print_r($print("Stored course id: $STORED_COURSE_ID");
     print("-------------------------\n");
 
     // When the Student submits the survey, update the completion of the survey and redirect to student.php.
     if(isset($_POST['submitSurvey'])) 
     {
-        recordSurveyCompletion($_SESSION['username'], $STORED_COURSE_ID);
+        recordSurveyCompletion($_SESSION['username']);
         header("LOCATION:student.php");
         print("SUCCESS: You have successfully completed the survey for this course.\n");
     }
@@ -69,4 +70,5 @@
         print "Error! " . $e->getMessage() . "<br/>";
         die();
     }
+    */
 ?>

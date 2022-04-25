@@ -6,6 +6,7 @@
     print_r($_POST);
     echo "</pre>";
 
+<<<<<<< HEAD
     // user clicked the login button
     if(isset($_POST['submit'])) 
     {
@@ -45,6 +46,17 @@
                 //         header("LOCATION:instructor.php");
                 //     }
                 // }
+=======
+// user clicked the login button
+if (isset($_POST['submit'])) {
+        //check the username and passwd, if correct, redirect to main.php page
+
+        if (authenticate($_POST['username'], $_POST['password']) == 1){
+                $_SESSION['username']=$_POST['username'];
+				isFirstLogin();		
+			//	print_r($_SESSION);
+              //  print_r($_POST);
+>>>>>>> issue1
                 return;
             } 
             else 
@@ -76,6 +88,18 @@
                 <input type="submit" id="submit" name="submit" value="Submit">
             </div>
         </form>
+<!--            <form class="createPwd" id="hiddenForm"style="display:none">
+               <div class="innerPwd">
+                    <label for="new_pwd" class="label"><b>New Password</b></label><br>
+                    <input type="text" id=old_pwd name="old_pwd" class="text" value="" require>
+                    <br/>
+                    <label for="new_pwd" class="label"><b>Confirm New Password</b></label><br>
+                    <input type="text" id=new_pwd name="new_pwd" class="text" value="" require>
+                    <br><br>
+                    <input type="submit" id="submit" name="submit" value="submit">
+                </div>
+             </form>
+-->
     </body>
 </html>
 

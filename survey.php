@@ -5,6 +5,15 @@
     // Join the session.
     session_start();
 
+    // When the Student submits the survey, update the completion of the survey and redirect to student.php.
+    if(isset($_POST['submitSurvey'])) 
+    {
+        print("HELLO");
+        recordSurveyCompletion($_SESSION['username']);
+        print("SUCCESS: You have successfully completed the survey for this course.");
+        header("LOCATION:student.php");
+    }
+
     // Have the student complete the survey.
     try 
     {
@@ -14,7 +23,7 @@
         $result = $statement->execute();
         $questions = $statement->fetchAll();
         ?>
-        <form class="survey-form" action="student.php" method="POST">
+        <form class="survey-form" action="survey.php" method="POST">
             <?php
             foreach($questions as $question)
             {
@@ -51,13 +60,5 @@
     {
         print "Error! " . $e->getMessage() . "<br/>";
         die();
-    }
-
-    // When the Student submits the survey, update the completion of the survey and redirect to student.php.
-    if(isset($_POST['submitSurvey'])) 
-    {
-        recordSurveyCompletion($_SESSION['username']);
-        print("SUCCESS: You have successfully completed the survey for this course.");
-        header("LOCATION:student.php");
     }
 ?>

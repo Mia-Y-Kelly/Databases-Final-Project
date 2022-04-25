@@ -1,11 +1,11 @@
 <?php
     require "db.php";
     session_start();
-    echo "<pre>";
+/*    echo "<pre>";
     print_r($_SESSION);
     print_r($_POST);
     echo "</pre>";
-	
+*/
 	// User clicked the submit button
 	if(isset($_POST['submit'])) {
 		$_SESSION['username'] = $_POST['username'];

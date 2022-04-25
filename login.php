@@ -2,10 +2,10 @@
     require "db.php";
     session_start();
     $_SESSION['COURSE_ID'] = "";
-	echo "<pre>";
+	/*echo "<pre>";
     print_r($_SESSION);
     print_r($_POST);
-    echo "</pre>";
+    echo "</pre>";*/
 
 // user clicked the login button
 if (isset($_POST['submit'])) {

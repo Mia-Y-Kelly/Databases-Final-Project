@@ -28,6 +28,7 @@
         // Determine whether the Student can take the survey.
         if(checkStudentCanTakeSurvey($_SESSION['username'], $_POST['surveyCourseID']) == TRUE)
         {
+            $STORED_COURSE_ID = $_POST['surveyCourseID'];
             header("LOCATION:survey.php");
         }
     }

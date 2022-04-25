@@ -206,7 +206,7 @@
             ?>
             <table>
             <tr>
-            <th>Course</th>
+            <th>Course      </th>
             <th>Survey Completion Status</th>
             </tr>
             <?php
@@ -214,7 +214,7 @@
             foreach($courses as $row) 
             {
                 echo "<tr>";
-                echo "<td>" . $row[1] . "</td>";
+                echo "<td>" . $row[1] . "       </td>";
 
                 if(is_null($row[2]))
                     echo "<td>Incomplete</td>";
@@ -285,7 +285,7 @@
     }
 
     // Record the date and time at which a Student completed the survey.
-    function recordSurveyCompletion($studentAccount)
+    function recordSurveyCompletion($studentAccount, $courseID)
     {
         try 
         {
@@ -293,8 +293,9 @@
             $sqlstmt = "UPDATE Takes SET survey_completion = CURRENT_TIMESTAMP()";
 
             $statement = $dbh->prepare($sqlstmt.
-                                        " where stu_acc = :studentAccount");
+                                        " where stu_acc = :studentAccount AND course_id = :courseID");
             $statement->bindParam(":studentAccount", $studentAccount);
+            $statement->bindParam(":courseID", $courseID);
             $result = $statement->execute();
             $rows=$statement->fetch();
             $dbh=null;

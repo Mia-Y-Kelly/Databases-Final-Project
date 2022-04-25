@@ -2,14 +2,12 @@
     require "db.php";
     session_start();
     $_SESSION['COURSE_ID'] = "";
-	/*echo "<pre>";
-    print_r($_SESSION);
-    print_r($_POST);
-    echo "</pre>";*/
 
-// user clicked the login button
-if (isset($_POST['submit'])) {
+    // user clicked the login button
+    if (isset($_POST['submit'])) 
+    {
         //check the username and passwd, if correct, redirect to main.php page
+<<<<<<< HEAD
 
         if (authenticate($_POST['username'], $_POST['password']) == 1){
                 $_SESSION['username']=$_POST['username'];
@@ -20,6 +18,18 @@ if (isset($_POST['submit'])) {
             {
 				echo '<p style="color:red;" align="center">incorrect username and password</p>';
             }
+=======
+        if (authenticate($_POST['username'], $_POST['password']) == 1)
+        {
+            $_SESSION['username']=$_POST['username'];
+			isFirstLogin();		
+            return;
+        } 
+        else 
+        {
+            echo '<p style=\"color:red\">incorrect username and password</p>';
+        }
+>>>>>>> annika-4-25-2am
     }
 
     // user clicked the logout button */

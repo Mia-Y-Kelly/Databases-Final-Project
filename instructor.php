@@ -81,7 +81,6 @@
                         $result = $statement->execute();
                         $row = $statement->fetchAll(PDO::FETCH_COLUMN);
                         $dbh = null;
-                       	var_dump($row); 
 						// Iterating through the product array
                         foreach($row as $item){
                             echo "<option value='$item'>$item</option>";
@@ -102,7 +101,6 @@
 						$questions = $dbh->prepare("SELECT * FROM Question;");
 						$question_result = $questions->execute();
 						$all_q = $questions->fetchAll();
-						// var_dump($all_q);
 
 						// Retrive choices and frequencies
 						$questions = $dbh->prepare("SELECT question_number, choice_string, freq from Course_Question_Responses WHERE course_id='$class' AND essay='N/A';");
@@ -169,13 +167,6 @@
 								echo "</table>";
 							}
 						}
-						/*$counter = 0;
-						foreach($questions_arr as $q) {
-							print "<br/>";
-                        	var_dump($questions_arr[$counter]);
-							$counter++;
-						}*/
-						
                     } catch (PDOException $e) {
                         print "<br/>ERROR: ". $e->getMessage()."<br/>";
                         die();

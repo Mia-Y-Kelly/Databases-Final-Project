@@ -115,7 +115,6 @@
     function resetPassword($user, $newPass) 
     {
         $dbh = connectDB();
-<<<<<<< HEAD
         $sql = "SELECT ";
     }
 
@@ -342,7 +341,6 @@
             die();
         }
     }
-=======
         $sqlstmt = "SELECT count(*) FROM
                     (SELECT stu_acc AS username, stu_pwd AS password FROM Student
                     UNION
@@ -444,5 +442,4 @@ function resetPwd($user, $pwd, $pwd2){
 		}
 	return;
 }
->>>>>>> issue1
 ?>

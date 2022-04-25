@@ -36,33 +36,6 @@
         }
     }
 
-    function checkFirstLogin($user, $passwd)
-    {
-        try 
-        {
-            $dbh = connectDB();
-            $sqlstmt = "SELECT passwordSet FROM
-                        (SELECT stu_acc AS username, stu_pwd AS password, pwd_set AS passwordSet FROM Student
-                        UNION
-                        SELECT instr_acc AS username, instr_pwd AS password, pwd_set AS passwordSet FROM Instructor) combined ";
-
-            $statement = $dbh->prepare($sqlstmt.
-                                        " where username = :username and password = sha2(:passwd,256) ");
-            $statement->bindParam(":username", $user);
-            $statement->bindParam(":passwd", $passwd);
-            $result = $statement->execute();
-            $row=$statement->fetch();
-            $dbh=null;
-
-            return $row[0];
-        }
-        catch (PDOException $e) 
-        {
-            print "Error! " . $e->getMessage() . "<br/>";
-            die();
-        }
-    }
-
     function isStudent($user)
     {
         try 
@@ -374,12 +347,12 @@ function isFirstLogin() {
 function resetPwd($user, $pwd, $pwd2){
         try {
 			$dbh = connectDB();
-        	$isStudent = isStudent();
+        	$isStudent = isStudent($user);
         
 			// If it is a student and the passwords match; change pwd
-			if($isStudent != NULL && ($pwd == $pwd2)) {
+			if($isStudent == 1 && ($pwd == $pwd2)) {
 				$sql = "UPDATE Student SET stu_pwd=sha2(:password, 256) WHERE stu_acc = :account";
-			} else if ($isStudent == NULL && ($pwd == $pwd2)){
+			} else if ($isStudent != 1 && ($pwd == $pwd2)){
 				//If it is an instructor and the passwords match; change pwd
             	$sql = "UPDATE Instructor SET instr_pwd=sha2(:password, 256) WHERE instr_acc = :account";
         	} else {
@@ -394,8 +367,23 @@ function resetPwd($user, $pwd, $pwd2){
 			$result = $statement->execute();
 			$row = $statement->fetch();
         	print_r($row);
-			$dbh=null;
-			header("LOCATION:main.php");
+            
+			//Set pwd_set to 1
+			if($isStudent == 1) {
+	            $sql = "UPDATE Student SET pwd_set=1 WHERE stu_acc = :account";
+            } else {
+                $sql = "UPDATE Instructor SET pwd_set=1 WHERE instr_acc = :account";
+            }
+			$statement = $dbh->prepare($sql);
+			$statement->bindParam(":account", $user);
+			$result = $statement->execute();
+			$dbh = null;
+
+			if(isStudent($user) == 1) {
+				header("LOCATION:student.php");
+			} else {
+				header("LOCATION:instructor.php");
+			}
 		} catch(PDOException $e) {
 			print "Error: ". $e->getMessage() . "<br/>";
 			die();

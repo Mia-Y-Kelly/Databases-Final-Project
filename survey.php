@@ -31,7 +31,7 @@
                 }
                 else if($question[0] == "FR")
                 {
-                    echo("<input type='text' id='freeResponse' name=" . $question[1] . "<br>");
+						echo("<input type='text' id='freeResponse' name='" . $question[1] . "'><br/>");
                 }
             }
     }
@@ -41,7 +41,7 @@
         die();
     }
       
-	echo("<input type='submit' value='Submit_Survey' name='submitSurvey'>");
+	echo("<input type='submit' value='Submit Survey' name='submitSurvey'>");
     if(isset($_POST['submitSurvey'])) 
 	{
 		try
@@ -57,12 +57,13 @@
 			foreach($_POST as $answer) 
 			{
 				$dbh = connectDB();
+				// Retrieve all the MC options from the choice table, if it returns a boolean, it must be FR
 				$sql = "SELECT choice_char FROM Choice WHERE choice_string= '$answer'";
 				$statement = $dbh->prepare($sql);
 				$result = $statement->execute();
 				$question_choice = $statement->fetch();
 				
-				// If it is of type boolean, then its FR				
+				// Get type				
 				$type = strval(gettype($question_choice));
 				
 				//print_r($all_questions[$counter]);	
@@ -70,40 +71,34 @@
 				{
 					break;
 				}
+				
+				// Retrieve current question
 				$q = $all_questions[$counter];
 				
 				if($type == "boolean") 
 				{
-					$sql = "INSERT INTO Course_Question_Responses VALUES('$course_id', '$q[1]', '$q[2]', NULL, '$answer')"; 
+					// Insert the FR response
+					//print_r($_GET);
+					//var_dump($_GET[($counter-1)]);
+					print "<br/>text field ";
+					var_dump($answer);
+					//print_r($answer[0]);
+					$sql = "INSERT INTO Course_Question_Responses(course_id, question_number, choice_string, freq, essay) VALUES('$course_id', '$q[1]', '$q[2]', NULL, '$answer')"; 
 					$statement = $dbh->prepare($sql);
 					$result = $statement->execute();
 				} 
 				else 
 				{
-					// Determine if its the first time the MC is inserted
-					$sql = "SELECT * FROM Course_Question_Responses WHERE freq=0 AND choice_string='$answer'";
+					// Insert the MC response	
+					$sql = "INSERT INTO Course_Question_Responses(course_id,question_number, choice_string, freq, essay) VALUES('$course_id', '$q[1]', '$answer', 1, 'N/A')";
 					$statement = $dbh->prepare($sql);
 					$result = $statement->execute();
-					$isFirst = $statement->fetch();
-					if($isFirst != 1) 
-					{
-						$sql = "INSERT INTO Course_Question_Responses VALUES('$course_id', '$q[1]', '$answer', 1, 'N/A')";
-						$statement = $dbh->prepare($sql);
-						$result = $statement->execute();
-					} 
-					else 
-					{
-						$sql = "UPDATE Course_Question_Responses SET freq = freq + 1 WHERE choice_string='$answer'";
-						$statement = $dbh->prepare($sql);
-						$result = $statement->execute();
-					}
+					$dbh = NULL;
 				}
 				$counter++;
-				$dbh = null;
 			}
-			header("LOCATION:student.php");
-		}
-	    catch(PDOException $e)
+			header("LOCATION:student.php"); 
+		} catch(PDOException $e)
 	   	{
         	print "Error! " . $e->getMessage() . "<br/>";
        		die();
@@ -112,5 +107,3 @@
 	}		
 		?>
         </form>
-<?php
-$dbh=null;

@@ -48,7 +48,7 @@
 		try
 		{	
 			// Retrieve the course_id from the session	
-			$course_id = $_SESSION['COURSE_ID'];
+			$course_id = strtoupper($_SESSION['COURSE_ID']);
 			
 			// Get all the questions
 			$dbh = connectDB();
@@ -100,14 +100,15 @@
 					$dbh = NULL;
 				}
 			}
-		}
 			header("LOCATION:student.php"); 
-		 catch(PDOException $e)
-	   	{
-        	print "Error! " . $e->getMessage() . "<br/>";
-       		die();
-    	}
+		}
+		catch(PDOException $e)
+		{
+			print "Error! " . $e->getMessage() . "<br/>";
+			die();
+		}
 	}
 		
 		?>
         </form>
+

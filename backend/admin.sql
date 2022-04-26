@@ -1,4 +1,4 @@
-use annikapr;
+use mykelly;
 
 drop table if exists Teaches;
 drop table if exists Takes;
@@ -166,4 +166,3 @@ create procedure createChoice(question_number int, choice_char char(1), choice v
 	begin
 		insert into Choice values(question_number, choice_char, choice);
 	end//
-delimiter ;

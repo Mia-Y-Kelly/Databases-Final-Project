@@ -103,41 +103,16 @@
 						$all_q = $questions->fetchAll();
 
 						// Retrive choices and frequencies
-						$questions = $dbh->prepare("SELECT question_number, choice_string, freq from Course_Question_Responses WHERE course_id='$class' AND essay='N/A';");
+						$questions = $dbh->prepare("SELECT DISTINCT question_number, choice_string, freq from Course_Question_Responses WHERE course_id='$class' AND essay='N/A';");
 						$question_result = $questions->execute();						
 						$questions_arr = $questions->fetchAll();
-						$question_total_responses[] = 1;
 						$counter = 1;
-						$total =0;
 						
-						// Calculate total frequency per question
-						for($i = 0; $i < count($questions_arr); $i++) {
-							// Add to total frequency
-							$q = $questions_arr[$i];
-							if($q[0] == $counter) {
-								$total = $total + $q[2];
-							} else {
-								// Push total
-								array_push($question_total_responses, $total);
-								
-								// Start summing new frequency
-								$total = 0;
-								$total = $total + $q[2];
-								$counter++;
-							}
-								
-						}
-						
-						// Push last element in the array
-						array_push($question_total_responses, $total);	
-						array_shift($question_total_responses); 	// This was set to 1 to create array but is not needed anymore
-						
-
 						// Retrive essay questions
 						$questions = $dbh->prepare("SELECT question_number, essay from Course_Question_Responses WHERE course_id='$class' AND essay!='N/A';");
                         $question_result = $questions->execute();
                         $essay = $questions->fetchAll();
-						
+							
 						// Print all the question options
 						foreach($all_q as $full_q) {
 							// Print out the question
@@ -151,8 +126,23 @@
 									if($q[0] != $full_q[1]) {
 										continue;
 									}
-									$freq = round((($q[2] / $question_total_responses[$q[0] - 1]) * 100), 0);
-									echo "<tr><td>".$q[1]."</td><td>".$q[2]."</td><td>".$freq.".00%<td></tr>";
+
+									// Calculate thie total frequency for the question
+									$sql = "SELECT sum(freq) as total from Course_Question_Responses WHERE question_number='$full_q[1]' AND course_id='$class'";
+									$statement = $dbh->prepare($sql);
+									$result = $statement->execute();
+									$total_res = $statement->fetch(PDO::FETCH_COLUMN);
+									
+									// Calculate the total frequency for the option
+                                    $sql = "SELECT sum(freq) as total_op from Course_Question_Responses WHERE question_number='$full_q[1]' AND course_id='$class' AND choice_string='$q[1]'";
+                                    $statement = $dbh->prepare($sql);
+                                    $result = $statement->execute();
+                                    $total_op = $statement->fetch(PDO::FETCH_COLUMN);
+
+									
+									// Calculate the frequency of the option
+									$freq = round(($total_op / $total_res * 100), 0);
+									echo "<tr><td>".$q[1]."</td><td>".$total_op."</td><td>".$freq.".00%<td></tr>";
 								}
 								echo "</table>";
 							} else {
@@ -167,6 +157,7 @@
 								echo "</table>";
 							}
 						}
+						$dbh = NULL;
                     } catch (PDOException $e) {
                         print "<br/>ERROR: ". $e->getMessage()."<br/>";
                         die();

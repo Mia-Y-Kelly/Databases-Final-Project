@@ -94,6 +94,15 @@
 				else 
 				{
 					// Insert the MC response
+					if(strpos($answer, "'") === false) {
+						//continue;
+					} else {
+						$pos = strpos($answer, "'");
+						$a1 = substr($answer, 0,$pos);
+						$a2 = "'";
+						$a3 = substr($answer, $pos);
+						$answer = $a1.$a2.$a3;
+					}
 					$sql = "INSERT INTO Course_Question_Responses(course_id,question_number, choice_string, freq, essay) VALUES('$course_id', '$q_num', '$answer', 1, 'N/A')";
 					$statement = $dbh->prepare($sql);
 					$result = $statement->execute();

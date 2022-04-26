@@ -2,13 +2,14 @@
 -- use mykelly;
 use annikapr;
 
--- Clear Student table
+-- Wipe out data in tables.
+delete from Teaches limit 100;
+delete from Course_Question_Responses limit 100;
+delete from Course limit 100;
+delete from Student limit 100;
+delete from Instructor limit 100;
 delete from Choice limit 100;
 delete from Question limit 100;
-delete from Takes limit 100;
-delete from Course limit 10;
-delete from Student limit 6;
-delete from Instructor limit 4;
 
 -- Add Students
 call createStudent("Bob", "Bob Alpha", "Password1");
@@ -17,6 +18,7 @@ call createStudent("Brook", "Brook Charlie", "Password3");
 call createStudent("Brian", "Brian Delta", "Password4");
 call createStudent("Bethany", "Bethany Echo", "Password5");
 call createStudent("Becky", "Becky Foxtrot", "Password6");
+call createStudent("Student1", "Becky Foxtrot", "Password7");
 
 -- Add Instructors;
 call createInstructor("Alice", "Alice Golf", "password1");
@@ -29,6 +31,9 @@ call createCourse("CS1121", "Introduction to Programming 1", 3);
 call createCourse("CS1122", "Introduction to Programming 2", 3);
 call createCourse("CS1131", "Accelerated Introduction to Programming", 3);
 call createCourse("CS1142", "Programming at the HW/SW Interface", 3);
+call createCourse("CS2311", "Discrete Structures", 3);
+call createCourse("CS2321", "Data Structures", 3);
+call createCourse("CS3425", "Introduction to Database Systems", 3);
 
 -- Add Questions.
 call createQuestion('MC', 1, "The pace of this course is");
@@ -43,9 +48,14 @@ call createChoice(2, 'C', "Neutral");
 call createChoice(2, 'D', "Disagree");
 call createChoice(2, 'E', "Strongly disagree");
 
-call createQuestion('FR', 3, "What did you enjoy about this course?");
+call createQuestion('FR', 3, "Anything you like about the teaching of this course?");
+call createChoice(3, NULL, "Anything you like about the teaching of this course?");
 
-call createQuestion('FR', 4, "Any suggestions to improve this course?");
+-- Assign instructors to courses.
+call assignInstructor('Alice' , 'CS2311');
+call assignInstructor('Aaron' , 'CS1142');
+call assignInstructor('Abel' , 'CS3425');
+call assignInstructor('Al' , 'CS2321');
 
 -- TBH I'M NOT SURE IF I HAD TO DO THIS STEP
 -- grant select, insert, update, delete on Student to 'mykelly'@'%';

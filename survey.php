@@ -25,7 +25,7 @@
                     $choices = $statement->fetchAll();
                     foreach($choices as $choice)
                     {
-                        echo("<input type='radio' id='multipleChoice' name='" . $choice[0] . "'value='" . $choice[2] . "'>");
+						echo("<input type='radio' id='multipleChoice' name='" . $choice[0] . "'value='" . $choice[2]. "'>");
                         echo("<label for='multipleChoice'>" . $choice[1]. ": ". $choice[2] . "</label><br>");
                     }
                 }
@@ -44,66 +44,70 @@
 	echo("<input type='submit' value='Submit Survey' name='submitSurvey'>");
     if(isset($_POST['submitSurvey'])) 
 	{
+	
 		try
-		{	$course_id = $_SESSION['COURSE_ID'];
+		{	
+			// Retrieve the course_id from the session	
+			$course_id = $_SESSION['COURSE_ID'];
+			
+			// Get all the questions
 			$dbh = connectDB();
-			$sql = "SELECT * FROM Question";
+			$sql = "SELECT question_type, question_number, question FROM Question";
 			$statement = $dbh->prepare($sql);
 			$result = $statement->execute();
 			$all_questions= $statement->fetchAll();			
 			$dbh = null;
-			$counter = 0;
-
-			foreach($_POST as $answer) 
+			
+			foreach($all_questions as $current_question) 
 			{
-				$dbh = connectDB();
-				// Retrieve all the MC options from the choice table, if it returns a boolean, it must be FR
-				$sql = "SELECT choice_char FROM Choice WHERE choice_string= '$answer'";
-				$statement = $dbh->prepare($sql);
-				$result = $statement->execute();
-				$question_choice = $statement->fetch();
+				// Get question number
+				$q_num = (int) $current_question["question_number"];
+				print "<br/><br/>";
 				
-				// Get type				
-				$type = strval(gettype($question_choice));
-				
-				//print_r($all_questions[$counter]);	
-				if($counter > count($all_questions) - 1) 
-				{
-					break;
+				// If the question number does not exists as a key in the array,
+				// then it had not response and continue to next question
+				if(!array_key_exists($q_num, $_POST)) {
+					continue;
 				}
 				
-				// Retrieve current question
-				$q = $all_questions[$counter];
+				// Get current question
+				$question = $current_question["question"];
 				
-				if($type == "boolean") 
+				// Get user response
+				$answer = $_POST[$q_num];
+
+				$dbh = connectDB();
+				
+				// Add FR if its not an empty string
+				if($current_question["question_type"] == "FR" && $answer != "") 
 				{
 					// Insert the FR response
-					//print_r($_GET);
-					//var_dump($_GET[($counter-1)]);
-					print "<br/>text field ";
-					var_dump($answer);
-					//print_r($answer[0]);
-					$sql = "INSERT INTO Course_Question_Responses(course_id, question_number, choice_string, freq, essay) VALUES('$course_id', '$q[1]', '$q[2]', NULL, '$answer')"; 
+					$sql = "INSERT INTO Course_Question_Responses(course_id, question_number, choice_string, freq, essay) VALUES('$course_id', '$q_num', '$question', NULL, '$answer')"; 
 					$statement = $dbh->prepare($sql);
 					$result = $statement->execute();
 				} 
+				else if ($current_question["question_type"] == "FR" && $answer == "")
+				{
+					// Continue if the FR is empty
+					continue;
+				}
 				else 
 				{
-					// Insert the MC response	
-					$sql = "INSERT INTO Course_Question_Responses(course_id,question_number, choice_string, freq, essay) VALUES('$course_id', '$q[1]', '$answer', 1, 'N/A')";
+					// Insert the MC response
+					$sql = "INSERT INTO Course_Question_Responses(course_id,question_number, choice_string, freq, essay) VALUES('$course_id', '$q_num', '$answer', 1, 'N/A')";
 					$statement = $dbh->prepare($sql);
 					$result = $statement->execute();
 					$dbh = NULL;
 				}
-				$counter++;
 			}
+		}
 			header("LOCATION:student.php"); 
-		} catch(PDOException $e)
+		 catch(PDOException $e)
 	   	{
         	print "Error! " . $e->getMessage() . "<br/>";
        		die();
     	}
-
-	}		
+	}
+		
 		?>
         </form>

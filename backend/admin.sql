@@ -1,4 +1,4 @@
-use annikapr;
+use mykelly;
 
 drop table if exists Teaches;
 drop table if exists Takes;
@@ -81,13 +81,12 @@ create table Choice
 
 /* Store all responses to the questions in this table */
 create table Course_Question_Responses (
+	id int AUTO_INCREMENT primary key,
 	course_id varchar(10),
     question_number int,
     choice_string char(200),
     freq int default 0,
-    essay varchar(255) default null, 
-    
-    primary key(course_id, question_number, choice_string),
+    essay varchar(255) default "", 
     
     foreign key (course_id) references Course(course_id),
     foreign key (question_number, choice_string) references Choice(question_number, choice_string)
@@ -167,4 +166,3 @@ create procedure createChoice(question_number int, choice_char char(1), choice v
 	begin
 		insert into Choice values(question_number, choice_char, choice);
 	end//
-delimiter ;

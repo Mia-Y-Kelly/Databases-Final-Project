@@ -114,7 +114,11 @@
             // First check if the course ID is invalid.
             if(checkStudentCourseID($studentAccount, $courseID) == null)
             {
+<<<<<<< HEAD
                 print("ERROR: Invalid course ID $courseID.");
+=======
+                print("ERROR: Invalid course ID $courseID<br/>");
+>>>>>>> 083c8926f67d90ee93d71ffd3f2a835c66dac611
                 return;
             }
             else
@@ -174,7 +178,11 @@
 
             if($row[0] == null)
             {
+<<<<<<< HEAD
                 print("ERROR: Invalid course ID $courseID");
+=======
+                print("ERROR: Invalid course ID $courseID<br/>");
+>>>>>>> 083c8926f67d90ee93d71ffd3f2a835c66dac611
                 return;
             }
             else
@@ -206,7 +214,7 @@
             ?>
             <table>
             <tr>
-            <th>Course</th>
+            <th>Course      </th>
             <th>Survey Completion Status</th>
             </tr>
             <?php
@@ -214,7 +222,7 @@
             foreach($courses as $row) 
             {
                 echo "<tr>";
-                echo "<td>" . $row[1] . "</td>";
+                echo "<td>" . $row[1] . "       </td>";
 
                 if(is_null($row[2]))
                     echo "<td>Incomplete</td>";
@@ -290,11 +298,18 @@
         try 
         {
             $dbh = connectDB();
+<<<<<<< HEAD
             echo("Trying to record survey completion");
             $sqlstmt = "UPDATE Takes SET survey_completion = CURRENT_TIMESTAMP()";
 
             $statement = $dbh->prepare($sqlstmt.
                                         " where stu_acc = :studentAccount and course_id = :courseID");
+=======
+            $sqlstmt = "UPDATE Takes SET survey_completion = CURRENT_TIMESTAMP()";
+
+            $statement = $dbh->prepare($sqlstmt.
+                                        " where stu_acc = :studentAccount AND course_id = :courseID");
+>>>>>>> 083c8926f67d90ee93d71ffd3f2a835c66dac611
             $statement->bindParam(":studentAccount", $studentAccount);
             $statement->bindParam(":courseID", $courseID);
             $result = $statement->execute();
@@ -346,7 +361,7 @@ function isFirstLogin() {
 }
 
 
-function resetPwd($user, $pwd, $pwd2){
+    function resetPwd($user, $pwd, $pwd2){
         try {
 			$dbh = connectDB();
         	$isStudent = isStudent($user);
@@ -361,14 +376,10 @@ function resetPwd($user, $pwd, $pwd2){
             	print "<p style='color:red;'>Passwords must match</p>";
         	}
         
-			print $user;
-			print $pwd;
         	$statement = $dbh->prepare($sql);
         	$statement->bindParam(":account", $user);
         	$statement->bindParam(":password", $pwd);
 			$result = $statement->execute();
-			$row = $statement->fetch();
-        	print_r($row);
             
 			//Set pwd_set to 1
 			if($isStudent == 1) {
@@ -393,33 +404,59 @@ function resetPwd($user, $pwd, $pwd2){
 	return;
 }
 
+<<<<<<< HEAD
     // Determine whether a student can take a course survey
     function checkCanCompleteSurvey($studentAccount, $courseID)
     {
         try
+=======
+    // Determine whether a Student can take the survey.
+    function checkStudentCanTakeSurvey($studentAccount, $courseID)
+    {
+        try 
+>>>>>>> 083c8926f67d90ee93d71ffd3f2a835c66dac611
         {
             $dbh = connectDB();
             $sqlstmt = "SELECT * FROM Takes ";
 
             $statement = $dbh->prepare($sqlstmt.
+<<<<<<< HEAD
                                         " where stu_acc = :studentAccount and course_id = :courseID");
+=======
+                                        " WHERE stu_acc = :studentAccount AND course_id = :courseID");
+>>>>>>> 083c8926f67d90ee93d71ffd3f2a835c66dac611
             $statement->bindParam(":studentAccount", $studentAccount);
             $statement->bindParam(":courseID", $courseID);
             $result = $statement->execute();
             $row=$statement->fetch();
+<<<<<<< HEAD
 
             if($row == null)
             {
                 print("ERROR: Invalid course ID $courseID.");
+=======
+            $dbh=null;
+
+            if($row == null)
+            {
+                print("ERROR: Invalid course ID $courseID");
+>>>>>>> 083c8926f67d90ee93d71ffd3f2a835c66dac611
                 return FALSE;
             }
             else if($row[2] != null)
             {
+<<<<<<< HEAD
                 print("ERROR: You have already completed the survey for course $courseID at $row[2].");
                 return FALSE;
             }
 
             $dbh=null;
+=======
+                print("ERROR: You have already completed the survey for $courseID at $row[2]");
+                return FALSE;
+            }
+
+>>>>>>> 083c8926f67d90ee93d71ffd3f2a835c66dac611
             return TRUE;
         }
         catch (PDOException $e) 
@@ -428,4 +465,57 @@ function resetPwd($user, $pwd, $pwd2){
             die();
         }
     }
+<<<<<<< HEAD
+=======
+
+    // Have the student complete the survey.
+    function completeSurvey($studentAccount, $courseID)
+    {
+        try 
+        {
+            $dbh = connectDB();
+            $sqlstmt = "SELECT * FROM Question ORDER BY question_number";
+            $statement = $dbh->prepare($sqlstmt);
+            $result = $statement->execute();
+            $questions = $statement->fetchAll();
+            
+			?>
+            <form class="survey-form" action="student.php" method="POST">
+                <?php
+                foreach($questions as $question)
+                {
+                    echo("<p>$question[1]. $question[2]</p>"); 
+
+                    if($question[0] == "MC")
+                    {
+                        $sqlstmt = "SELECT * FROM Choice WHERE question_number = $question[1] ORDER BY choice_char";
+                        $statement = $dbh->prepare($sqlstmt);
+                        $result = $statement->execute();
+                        $choices = $statement->fetchAll();
+                        foreach($choices as $choice)
+                        {
+                            echo("<input type='radio' id='multipleChoice' name='" . $choice[0] . "'value='" . $choice[2] . "'>");
+                            echo("<label for='multipleChoice'>" . $choice[1]. ": ". $choice[2] . "</label><br>");
+                        }
+                    }
+                    else if($question[0] == "FR")
+                    {
+                        echo("<input type='text' id='freeResponse' name=" . $question[1] . "<br>");
+                    }
+                }
+
+                echo("<input type='submit' value='Submit_Survey' name='submitSurvey'>");
+				?>
+            </form>
+            <?php
+            $dbh=null;
+
+        }
+        catch(PDOException $e) 
+        {
+            print "Error! " . $e->getMessage() . "<br/>";
+            die();
+        }
+}    
+>>>>>>> 083c8926f67d90ee93d71ffd3f2a835c66dac611
 ?>

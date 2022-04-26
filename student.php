@@ -5,6 +5,22 @@
     // Join the session.
     session_start();
 
+?>        <form action="login.php" method="post">
+            <?php
+                if (!isset($_SESSION['username'])) {
+            ?>
+                <input type="submit" class="submit" value='login' name="login">
+            <?php
+                } else {
+                    echo "Welcome ". $_SESSION['username'];
+            ?>
+                    <input type="submit" class="submit" value='logout' name="logout">
+            <?php
+                }
+            ?>
+        </form>
+
+<?php
     // Student clicked the Register button
     if(isset($_POST['register'])) 
     {
@@ -28,7 +44,11 @@
         // Check whether the Student can take the survey for the specified course.
         if(checkCanCompleteSurvey($_SESSION['username'], $_POST['surveyCourseID']) == TRUE)
         {
+            $_SESSION['COURSE_ID']= $_POST['surveyCourseID'];
             header("LOCATION:survey.php");
+			completeSurvey($_SESSION['username'], $_POST['surveyCourseID']);
+            recordSurveyCompletion($_SESSION['username'], $_POST['surveyCourseID']);
+            print("SUCCESS: You have successfully completed the survey for this course.\n");
         }
     }
 ?>
@@ -50,7 +70,6 @@
                 <input type="submit" id="checkSurveyStatus" name="checkSurveyStatus" value="Check Survey Status">
             </div>
         </form>
-
         <form class="form" action="student.php" method="POST">
             <div class="take-survey-form">
                 <label for="surveyCourseID" class="label"><b>Take Survey for a Course ID</b></label><br>

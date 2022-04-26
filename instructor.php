@@ -47,7 +47,6 @@
             }
     }
 ?>
-
 <html>
     <body>
         <form class="form" action="instructor.php" method="POST">

@@ -46,14 +46,6 @@
 
             $dbh=null;
 
-            // When the Student submits the survey, update the completion of the survey and redirect to student.php.
-            if(isset($_POST['submitSurvey'])) 
-            {
-                recordSurveyCompletion($_SESSION['username'], $_POST['surveyCourseID']);
-                print("SUCCESS: You have successfully completed the survey for this course.\n");
-                header("LOCATION:student.php");
-            }
-
             return;
     }
     catch(PDOException $e)
@@ -126,6 +118,9 @@
 					$dbh = NULL;
 				}
 			}
+
+            recordSurveyCompletion($_SESSION['username'], $_POST['surveyCourseID']);
+            print("SUCCESS: You have successfully completed the survey for this course.\n");
 			header("LOCATION:student.php"); 
 		}
 		catch(PDOException $e)
@@ -135,6 +130,40 @@
 		}
 	}
 		
-		?>
-        </form>
+?>
 
+<html>
+  <head>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+
+        var data = google.visualization.arrayToDataTable([
+          ['Task', 'Hours per Day'],
+          ['Work',     11],
+          ['Eat',      2],
+          ['Commute',  2],
+          ['Watch TV', 2],
+          ['Sleep',    7]
+        ]);
+
+        var options = {
+          title: 'My Daily Activities'
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+
+        chart.draw(data, options);
+      }
+    </script>
+  </head>
+  <body>
+    <div id="piechart" style="width: 900px; height: 500px;"></div>
+  </body>
+</html>
+
+<?php
+?>

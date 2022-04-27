@@ -59,17 +59,6 @@
             </div>
         </form>
 
-<<<<<<< HEAD
-        <form class="form" action="instructor.php" method="POST">
-            <div class="evaluation-result-form">
-            <label for="courseID" class="label"><b>Enter a Valid Course ID</b></label><br>
-                <input type="text" id="courseID" name="courseID" class="text" value="" require>
-                <br><br>
-                
-                <input type="submit" id="evaluationResult" name="evaluationResult" value="See Course Evaluation Result">
-            </div>
-        </form>
-=======
 						// Retrive choices and frequencies
 						$questions = $dbh->prepare("SELECT DISTINCT question_number, choice_string, freq from Course_Question_Responses WHERE course_id='$class' AND essay='N/A';");
 						$question_result = $questions->execute();						
@@ -137,6 +126,5 @@
                 }
             ?>
 		</form>
->>>>>>> 99ea0b312f0c59b764756a1953bb3610754bcc64
     </body>
 </html>

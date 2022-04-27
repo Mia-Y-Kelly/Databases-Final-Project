@@ -25,23 +25,17 @@
 
                     if($question[0] == 'MC')
                     {
-                        $sqlstmt = "SELECT * FROM Question WHERE question_number = $question[1] ORDER BY choice_char";
-                        $statement = $dbh->prepare($sqlstmt);
-                        $result = $statement->execute();
-                        $choices = $statement->fetchAll();
-                        foreach($choices as $choice)
-                        {
-                            echo("<p>$choice[3]: $choice[4]</p>");
-                            ?>
-                            <input type="radio" id="multipleChoice" name="multipleChoice" value="multipleChoice">
-                            <?php
-                        }
-                    }
-                    else if($question[0] == 'FR')
-                    {
-                        ?>
-                        <input type="text" id="freeResponse" name="freeResponse"><br>
-                        <?php
+						// Use html code if apostrophe exists in string
+						$c1 = "";
+						if(is_int(strpos($choice[2], "'"))){
+							$position = strpos($choice[2], "'");
+							$c1 = substr($choice[2], 0, $position);
+							$c2 = substr($choice[2], $position + 1);
+							$c1 = $c1."&#39".$c2;
+						}
+						
+						echo("<input type='radio' id='multipleChoice' name='" . $choice[0] . "' value='$c1'> ");
+                        echo("<label for='multipleChoice'>" . $choice[1]. ": ". $choice[2] . "</label><br>");
                     }
                 }
                 ?>
@@ -102,7 +96,7 @@
 				
 				// Get user response
 				$answer = $_POST[$q_num];
-
+				
 				$dbh = connectDB();
 				
 				// Add FR if its not an empty string
@@ -120,7 +114,12 @@
 				}
 				else 
 				{
-					// Insert the MC response
+					// Insert escape character if there is an apostrophe
+					if(is_int(strpos($answer, "'"))) {
+						$answer = addslashes($answer);
+						echo $answer;
+					}
+
 					$sql = "INSERT INTO Course_Question_Responses(course_id,question_number, choice_string, freq, essay) VALUES('$course_id', '$q_num', '$answer', 1, 'N/A')";
 					$statement = $dbh->prepare($sql);
 					$result = $statement->execute();

@@ -1,4 +1,5 @@
 <?php
+	// Connect to the database
     function connectDB() 
     {
         $config = parse_ini_file("db.ini");
@@ -36,6 +37,7 @@
         }
     }
 
+	// Helper function to determine if they are a student
     function isStudent($user)
     {
         try 
@@ -60,6 +62,7 @@
         }
     }
 
+	// Helper function to determine if they are an instructor
     function isInstructor($user)
     {
         try 

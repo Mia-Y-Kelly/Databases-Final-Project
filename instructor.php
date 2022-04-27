@@ -127,17 +127,10 @@
 										continue;
 									}
 									
-																		// Insert the MC response
-									if(strpos($q[0], "'") === false) {
-										//continue;
-                    				} else {
-                        				$pos = strpos($q[0], "'");
-                        				$a1 = substr($q[0], 0,$pos);
-                        				$a2 = "'";
-                        				$a3 = substr($q[0], $pos);
-                        				$q[0] = $a1.$a2.$a3;
-										echo $q[0];
-                    				}
+									// Insert escape character if needed
+									if(is_int(strpos($q[1], "'"))) {
+                    					$q[1] = addslashes($q[1]);
+									}                    				
 
 									// Calculate thie total frequency for the question
 									$sql = "SELECT sum(freq) as total from Course_Question_Responses WHERE question_number='$full_q[1]' AND course_id='$class'";
@@ -153,7 +146,7 @@
 									
 									// Calculate the frequency of the option
 									$freq = round(($total_op / $total_res * 100), 0);
-									echo "<tr><td>".$q[1]."</td><td>".$total_op."</td><td>".$freq.".00%<td></tr>";
+									echo "<tr><td>".stripslashes($q[1])."</td><td>".$total_op."</td><td>".$freq.".00%<td></tr>";
 								}
 								echo "</table>";
 							} else {

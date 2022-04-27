@@ -34,7 +34,7 @@
 							$c1 = $c1."&#39".$c2;
 						}
 						
-						echo("<input type='radio' id='multipleChoice' name='" . $choice[0] . "'value='$c1'>");
+						echo("<input type='radio' id='multipleChoice' name='" . $choice[0] . "' value='$c1'> ");
                         echo("<label for='multipleChoice'>" . $choice[1]. ": ". $choice[2] . "</label><br>");
                     }
                 }

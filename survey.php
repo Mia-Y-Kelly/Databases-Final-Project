@@ -103,17 +103,20 @@
 				else 
 				{
 					// Insert escape character if there is an apostrophe
-					if(is_int(strpos($answer, "'"))) {
+			/*		if(is_int(strpos($answer, "'"))) {
 						$answer = addslashes($answer);
 						echo $answer;
-					}
-
+					}*/
+					echo $answer;
 					$sql = "INSERT INTO Course_Question_Responses(course_id,question_number, choice_string, freq, essay) VALUES('$course_id', '$q_num', '$answer', 1, 'N/A')";
 					$statement = $dbh->prepare($sql);
 					$result = $statement->execute();
 					$dbh = NULL;
 				}
+			
 			}
+			recordSurveyCompletion($_SESSION['username'], $_POST['surveryCourseID']);
+			print("SUCCESS: You have successfully completed the survey for this course\n");
 			header("LOCATION:student.php"); 
 		}
 		catch(PDOException $e)

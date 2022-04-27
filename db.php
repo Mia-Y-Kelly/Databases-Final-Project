@@ -313,7 +313,7 @@
     }
     
 
-// Currently working on detecting if password reset should occur
+// Determine if the user is logging in for the first time and redirect appropriately
 function isFirstLogin() {
     try {
 		$acc = $_POST['username'];
@@ -349,7 +349,12 @@ function isFirstLogin() {
 
 
     function resetPwd($user, $pwd, $pwd2){
-        try {
+        if(strcmp($user, "") || strcmp($pwd, "")  || strcmp($pwd2, "")) {
+			header("LOCATION:student.php");
+
+		}
+		
+		try {
 			$dbh = connectDB();
         	$isStudent = isStudent($user);
         

@@ -8,9 +8,9 @@ delete from Question limit 100;
 delete from Takes limit 100;
 delete from Teaches limit 100;
 delete from Course_Question_Responses limit 100;
-delete from Course limit 10;
-delete from Student limit 6;
-delete from Instructor limit 4;
+delete from Course limit 100;
+delete from Student limit 100;
+delete from Instructor limit 100;
 
 
 -- Add Students
@@ -54,8 +54,6 @@ call createChoice(3, NULL, "Anything you like about the teaching of the course?"
 call assignInstructor("Alice", "CS2311");
 call assignInstructor("Aaron", "CS1142");
 call assignInstructor("Al", "CS2321");
-
-
 
 -- TBH I'M NOT SURE IF I HAD TO DO THIS STEP
 -- grant select, insert, update, delete on Student to 'mykelly'@'%';

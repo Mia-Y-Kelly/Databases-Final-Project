@@ -60,7 +60,7 @@
 		{	
 			// Retrieve the course_id from the session	
 			$course_id = strtoupper($_SESSION['COURSE_ID']);
-			var_dump($_POST);	
+			
 			// Get all the questions
 			$dbh = connectDB();
 			$sql = "SELECT question_type, question_number, question FROM Question";
@@ -118,7 +118,7 @@
 			}
 
 			$dbh->commit();
-			recordSurveyCompletion($_SESSION['username'], $_POST['surveryCourseID']);
+			recordSurveyCompletion($_SESSION['username'], $course_id);
 			print("SUCCESS: You have successfully completed the survey for this course\n");
 			header("LOCATION:student.php"); 
 		}

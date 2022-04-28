@@ -32,6 +32,8 @@
 							$c1 = substr($choice[2], 0, $position);
 							$c2 = substr($choice[2], $position + 1);
 							$c1 = $c1."&#39".$c2;
+						} else {
+							$c1 = $choice[2];
 						}
 						
 						echo("<input type='radio' id='multipleChoice' name='" . $choice[0] . "' value='$c1'> ");
@@ -58,7 +60,7 @@
 		{	
 			// Retrieve the course_id from the session	
 			$course_id = strtoupper($_SESSION['COURSE_ID']);
-			
+			var_dump($_POST);	
 			// Get all the questions
 			$dbh = connectDB();
 			$sql = "SELECT question_type, question_number, question FROM Question";
@@ -84,30 +86,31 @@
 				
 				// Get user response
 				$answer = $_POST[$q_num];
-				
+				echo $answer;	
 				$dbh = connectDB();
 				
 				// Add FR if its not an empty string
-				if($current_question["question_type"] == "FR" && $answer != "") 
+				if(!empty($answer) && $current_question["question_type"] == "FR") 
 				{
 					// Insert the FR response
 					$sql = "INSERT INTO Course_Question_Responses(course_id, question_number, choice_string, freq, essay) VALUES('$course_id', '$q_num', '$question', NULL, '$answer')"; 
 					$statement = $dbh->prepare($sql);
 					$result = $statement->execute();
 				} 
-				else if ($current_question["question_type"] == "FR" && $answer == "")
+				else if ($current_question["question_type"] == "FR" && empty($answer))
 				{
 					// Continue if the FR is empty
+					echo "FR is empty";
 					continue;
 				}
 				else 
 				{
 					// Insert escape character if there is an apostrophe
-			/*		if(is_int(strpos($answer, "'"))) {
+					if(is_int(strpos($answer, "'"))) {
 						$answer = addslashes($answer);
 						echo $answer;
-					}*/
-					echo $answer;
+					}
+					
 					$sql = "INSERT INTO Course_Question_Responses(course_id,question_number, choice_string, freq, essay) VALUES('$course_id', '$q_num', '$answer', 1, 'N/A')";
 					$statement = $dbh->prepare($sql);
 					$result = $statement->execute();

@@ -86,9 +86,9 @@
 				
 				// Get user response
 				$answer = $_POST[$q_num];
-				echo $answer;	
 				$dbh = connectDB();
-				
+				$dbh->beginTransaction();
+	
 				// Add FR if its not an empty string
 				if(!empty($answer) && $current_question["question_type"] == "FR") 
 				{
@@ -100,7 +100,6 @@
 				else if ($current_question["question_type"] == "FR" && empty($answer))
 				{
 					// Continue if the FR is empty
-					echo "FR is empty";
 					continue;
 				}
 				else 
@@ -108,7 +107,6 @@
 					// Insert escape character if there is an apostrophe
 					if(is_int(strpos($answer, "'"))) {
 						$answer = addslashes($answer);
-						echo $answer;
 					}
 					
 					$sql = "INSERT INTO Course_Question_Responses(course_id,question_number, choice_string, freq, essay) VALUES('$course_id', '$q_num', '$answer', 1, 'N/A')";
@@ -118,12 +116,15 @@
 				}
 			
 			}
+
+			$dbh->commit();
 			recordSurveyCompletion($_SESSION['username'], $_POST['surveryCourseID']);
 			print("SUCCESS: You have successfully completed the survey for this course\n");
 			header("LOCATION:student.php"); 
 		}
 		catch(PDOException $e)
 		{
+			$dbh->rollBack();
 			print "Error! " . $e->getMessage() . "<br/>";
 			die();
 		}

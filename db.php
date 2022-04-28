@@ -14,26 +14,27 @@
     {
         try 
         {
-            $dbh = connectDB();
-            $sqlstmt = "SELECT count(*) FROM
+			$dbh = connectDB();
+            
+			$sqlstmt = "SELECT count(*) FROM
                         (SELECT stu_acc AS username, stu_pwd AS password FROM Student
                         UNION
                         SELECT instr_acc AS username, instr_pwd AS password FROM Instructor) combined ";
-
             $statement = $dbh->prepare($sqlstmt.
                                         " where username = :username and password = sha2(:passwd,256) ");
             $statement->bindParam(":username", $user);
             $statement->bindParam(":passwd", $passwd);
             $result = $statement->execute();
             $row=$statement->fetch();
+			
             $dbh=null;
 
             return $row[0];
         }
         catch (PDOException $e) 
         {
-            print "Error! " . $e->getMessage() . "<br/>";
-            die();
+			print "Error! " . $e->getMessage() . "<br/>";
+			die();
         }
     }
 
@@ -43,7 +44,8 @@
         try 
         {
             $dbh = connectDB();
-            $sqlstmt = "SELECT COUNT(*) FROM
+            
+			$sqlstmt = "SELECT COUNT(*) FROM
                         (SELECT stu_acc AS username FROM Student) students ";
 
             $statement = $dbh->prepare($sqlstmt.
@@ -51,13 +53,14 @@
             $statement->bindParam(":username", $user);
             $result = $statement->execute();
             $row=$statement->fetch();
+
             $dbh=null;
 
             return $row[0];
         }
         catch (PDOException $e) 
         {
-            print "Error! " . $e->getMessage() . "<br/>";
+			print "Error! " . $e->getMessage() . "<br/>";
             die();
         }
     }
@@ -68,6 +71,9 @@
         try 
         {
             $dbh = connectDB();
+
+			// Begin transaction
+			$dbh->beginTransaction();
             $sqlstmt = "SELECT COUNT(*) FROM
                         (SELECT instr_acc AS username FROM Instructor) instructors ";
 
@@ -76,13 +82,17 @@
             $statement->bindParam(":username", $user);
             $result = $statement->execute();
             $row=$statement->fetch();
-            $dbh=null;
+            
+			// Commit transaction
+			$dbh->commit();
+			$dbh=null;
 
             return $row[0];
         }
         catch (PDOException $e) 
         {
-            print "Error! " . $e->getMessage() . "<br/>";
+            $dbh->rollBack();
+			print "Error! " . $e->getMessage() . "<br/>";
             die();
         }
     }
@@ -93,13 +103,16 @@
         try
         {
             $dbh = connectDB();
+				
+			// Begin transaction
+			$dbh->beginTransaction();
             $sqlstmt = "SELECT course_id FROM Course ";
-
             $statement = $dbh->prepare($sqlstmt.
                                         " where course_id = :courseID");
             $statement->bindParam(":courseID", $courseID);
             $result = $statement->execute();
             $row=$statement->fetch();
+			$dbh->commit();
             return $row;
         }
         catch (PDOException $e) 
@@ -136,11 +149,13 @@
 
                 if($row == null)
                 {
-                    $statement = $dbh->prepare("INSERT INTO Takes VALUES(:studentAccount, :courseID, null)");
+                    $dbh->beginTransaction();
+					$statement = $dbh->prepare("INSERT INTO Takes VALUES(:studentAccount, :courseID, null)");
                     $statement->bindParam(":studentAccount", $studentAccount);
                     $statement->bindParam(":courseID", $courseID);
                     $result = $statement->execute();
                     $row=$statement->fetch();
+					$dbh->commit();
                     print("SUCCESS: You have successfully registered for course $courseID.");
                 }
                 else
@@ -154,7 +169,8 @@
         }
         catch (PDOException $e) 
         {
-            print "Error! " . $e->getMessage() . "<br/>";
+            $dbh->rollBack();
+			print "Error! " . $e->getMessage() . "<br/>";
             die();
         }
     }
@@ -293,6 +309,7 @@
         try 
         {
             $dbh = connectDB();
+			$dbh->beginTransaction();
             $sqlstmt = "UPDATE Takes SET survey_completion = CURRENT_TIMESTAMP()";
 
             $statement = $dbh->prepare($sqlstmt.
@@ -301,19 +318,21 @@
             $statement->bindParam(":courseID", $courseID);
             $result = $statement->execute();
             $rows=$statement->fetch();
+			$dbh->commit();
             $dbh=null;
 
             return $rows;
         }
         catch (PDOException $e) 
         {
-            print "Error! " . $e->getMessage() . "<br/>";
+            $dbh->rollBack();
+			print "Error! " . $e->getMessage() . "<br/>";
             die();
         }
     }
     
 
-// Determine if the user is logging in for the first time and redirect appropriately
+// Determine if the user is logging in for the first time and redirect as needed
 function isFirstLogin() {
     try {
 		$acc = $_POST['username'];
@@ -357,7 +376,8 @@ function isFirstLogin() {
 		try {
 			$dbh = connectDB();
         	$isStudent = isStudent($user);
-        
+        	
+			$dbh->beginTransaction();
 			// If it is a student and the passwords match; change pwd
 			if($isStudent == 1 && ($pwd == $pwd2)) {
 				$sql = "UPDATE Student SET stu_pwd=sha2(:password, 256) WHERE stu_acc = :account";
@@ -382,6 +402,7 @@ function isFirstLogin() {
 			$statement = $dbh->prepare($sql);
 			$statement->bindParam(":account", $user);
 			$result = $statement->execute();
+			$dbh->commit();
 			$dbh = null;
 
 			if(isStudent($user) == 1) {
@@ -390,6 +411,7 @@ function isFirstLogin() {
 				header("LOCATION:instructor.php");
 			}
 		} catch(PDOException $e) {
+			$dbh->rollBack();
 			print "Error: ". $e->getMessage() . "<br/>";
 			die();
 		}
@@ -432,53 +454,4 @@ function isFirstLogin() {
         }
     }
 
-    // Have the student complete the survey.
-    function completeSurvey($studentAccount, $courseID)
-    {
-        try 
-        {
-            $dbh = connectDB();
-            $sqlstmt = "SELECT * FROM Question ORDER BY question_number";
-            $statement = $dbh->prepare($sqlstmt);
-            $result = $statement->execute();
-            $questions = $statement->fetchAll();
-            
-			?>
-            <form class="survey-form" action="student.php" method="POST">
-                <?php
-                foreach($questions as $question)
-                {
-                    echo("<p>$question[1]. $question[2]</p>"); 
-
-                    if($question[0] == "MC")
-                    {
-                        $sqlstmt = "SELECT * FROM Choice WHERE question_number = $question[1] ORDER BY choice_char";
-                        $statement = $dbh->prepare($sqlstmt);
-                        $result = $statement->execute();
-                        $choices = $statement->fetchAll();
-                        foreach($choices as $choice)
-                        {
-                            echo("<input type='radio' id='multipleChoice' name='" . $choice[0] . "'value='" . $choice[2] . "'>");
-                            echo("<label for='multipleChoice'>" . $choice[1]. ": ". $choice[2] . "</label><br>");
-                        }
-                    }
-                    else if($question[0] == "FR")
-                    {
-                        echo("<input type='text' id='freeResponse' name=" . $question[1] . "<br>");
-                    }
-                }
-
-                echo("<input type='submit' value='Submit_Survey' name='submitSurvey'>");
-				?>
-            </form>
-            <?php
-            $dbh=null;
-
-        }
-        catch(PDOException $e) 
-        {
-            print "Error! " . $e->getMessage() . "<br/>";
-            die();
-        }
-}    
 ?>

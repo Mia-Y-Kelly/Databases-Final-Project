@@ -118,7 +118,7 @@
 			}
 
 			$dbh->commit();
-			recordSurveyCompletion($_SESSION['username'], $_POST['surveryCourseID']);
+			recordSurveyCompletion($_SESSION['username'], $course_id);
 			print("SUCCESS: You have successfully completed the survey for this course\n");
 			header("LOCATION:student.php"); 
 		}

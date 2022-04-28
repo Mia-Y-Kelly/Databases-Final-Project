@@ -67,8 +67,8 @@
 			$statement = $dbh->prepare($sql);
 			$result = $statement->execute();
 			$all_questions= $statement->fetchAll();			
-			$dbh = null;
-			
+		
+			$dbh->beginTransaction();	
 			foreach($all_questions as $current_question) 
 			{
 				// Get question number
@@ -86,8 +86,6 @@
 				
 				// Get user response
 				$answer = $_POST[$q_num];
-				$dbh = connectDB();
-				$dbh->beginTransaction();
 	
 				// Add FR if its not an empty string
 				if(!empty($answer) && $current_question["question_type"] == "FR") 
@@ -112,7 +110,6 @@
 					$sql = "INSERT INTO Course_Question_Responses(course_id,question_number, choice_string, freq, essay) VALUES('$course_id', '$q_num', '$answer', 1, 'N/A')";
 					$statement = $dbh->prepare($sql);
 					$result = $statement->execute();
-					$dbh = NULL;
 				}
 			
 			}

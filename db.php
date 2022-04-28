@@ -38,6 +38,92 @@
         }
     }
 
+	// Determine if the user is logging in for the first time and redirect as needed
+	function isFirstLogin() {
+		try {
+			$acc = $_POST['username'];
+			$dbh = connectDB();
+			$sql = "SELECT username, pwd_set FROM
+								(SELECT stu_acc AS username, pwd_set AS pwd_set FROM Student
+								UNION
+								SELECT instr_acc AS username, pwd_set AS pwd_set FROM Instructor) combined WHERE username = '$acc'";
+			$statement = $dbh->prepare($sql);		
+			$result = $statement->execute();
+			$row = $statement->fetch(PDO::FETCH_BOTH);
+			$result = (int) $row['pwd_set'];
+			
+			if($result == 0) { 
+				header("LOCATION:resetpwd.php");			
+				return;
+			} else {
+				if(isStudent($_POST['username']) == 1) {
+					header("LOCATION:student.php");
+				} else {
+					header("LOCATION:instructor.php");
+				}
+			}
+			
+			$dbh = null;
+
+			return;
+		} catch (PDOException $e) {
+			print "Error! ". $e->getMessage() . "<br/>";
+			die();
+		}
+	}
+
+	// Reset the password
+    function resetPwd($user, $pwd, $pwd2){
+        if(strcmp($user, "") || strcmp($pwd, "")  || strcmp($pwd2, "")) {
+			header("LOCATION:student.php");
+		}
+		
+		try {
+			$dbh = connectDB();
+        	$isStudent = isStudent($user);
+        	
+			$dbh->beginTransaction();
+			// If it is a student and the passwords match; change pwd
+			if($isStudent == 1 && ($pwd == $pwd2)) {
+				$sql = "UPDATE Student SET stu_pwd=sha2(:password, 256) WHERE stu_acc = :account";
+			} else if ($isStudent != 1 && ($pwd == $pwd2)){
+				//If it is an instructor and the passwords match; change pwd
+            	$sql = "UPDATE Instructor SET instr_pwd=sha2(:password, 256) WHERE instr_acc = :account";
+        	} else {
+            	print "<p style='color:red;'>Passwords must match</p>";
+        	}
+        
+        	$statement = $dbh->prepare($sql);
+        	$statement->bindParam(":account", $user);
+        	$statement->bindParam(":password", $pwd);
+			$result = $statement->execute();
+            
+			//Set pwd_set to 1
+			if($isStudent == 1) {
+	            $sql = "UPDATE Student SET pwd_set=1 WHERE stu_acc = :account";
+            } else {
+                $sql = "UPDATE Instructor SET pwd_set=1 WHERE instr_acc = :account";
+            }
+			$statement = $dbh->prepare($sql);
+			$statement->bindParam(":account", $user);
+			$result = $statement->execute();
+			$dbh->commit();
+			$dbh = null;
+
+			if(isStudent($user) == 1) {
+				header("LOCATION:student.php");
+			} else {
+				header("LOCATION:instructor.php");
+			}
+		} catch(PDOException $e) {
+			$dbh->rollBack();
+			print "Error: ". $e->getMessage() . "<br/>";
+			die();
+		}
+	return;
+}
+
+
 	// Helper function to determine if they are a student
     function isStudent($user)
     {
@@ -72,8 +158,6 @@
         {
             $dbh = connectDB();
 
-			// Begin transaction
-			$dbh->beginTransaction();
             $sqlstmt = "SELECT COUNT(*) FROM
                         (SELECT instr_acc AS username FROM Instructor) instructors ";
 
@@ -83,15 +167,13 @@
             $result = $statement->execute();
             $row=$statement->fetch();
             
-			// Commit transaction
-			$dbh->commit();
+
 			$dbh=null;
 
             return $row[0];
         }
         catch (PDOException $e) 
         {
-            $dbh->rollBack();
 			print "Error! " . $e->getMessage() . "<br/>";
             die();
         }
@@ -104,15 +186,13 @@
         {
             $dbh = connectDB();
 				
-			// Begin transaction
-			$dbh->beginTransaction();
             $sqlstmt = "SELECT course_id FROM Course ";
             $statement = $dbh->prepare($sqlstmt.
                                         " where course_id = :courseID");
             $statement->bindParam(":courseID", $courseID);
             $result = $statement->execute();
             $row=$statement->fetch();
-			$dbh->commit();
+
             return $row;
         }
         catch (PDOException $e) 
@@ -331,93 +411,6 @@
         }
     }
     
-
-// Determine if the user is logging in for the first time and redirect as needed
-function isFirstLogin() {
-    try {
-		$acc = $_POST['username'];
-		$dbh = connectDB();
-		$sql = "SELECT username, pwd_set FROM
-        	                (SELECT stu_acc AS username, pwd_set AS pwd_set FROM Student
-            	            UNION
-                	        SELECT instr_acc AS username, pwd_set AS pwd_set FROM Instructor) combined WHERE username = '$acc'";
-		$statement = $dbh->prepare($sql);		
-		$result = $statement->execute();
-		$row = $statement->fetch(PDO::FETCH_BOTH);
-		$result = (int) $row['pwd_set'];
-		
-		if($result == 0) { 
-			header("LOCATION:resetpwd.php");			
-			return;
-		} else {
-			if(isStudent($_POST['username']) == 1) {
-				header("LOCATION:student.php");
-			} else {
-				header("LOCATION:instructor.php");
-			}
-		}
-		
-		$dbh = null;
-
-		return;
-	} catch (PDOException $e) {
-		print "Error! ". $e->getMessage() . "<br/>";
-		die();
-	}
-}
-
-
-    function resetPwd($user, $pwd, $pwd2){
-        if(strcmp($user, "") || strcmp($pwd, "")  || strcmp($pwd2, "")) {
-			header("LOCATION:student.php");
-
-		}
-		
-		try {
-			$dbh = connectDB();
-        	$isStudent = isStudent($user);
-        	
-			$dbh->beginTransaction();
-			// If it is a student and the passwords match; change pwd
-			if($isStudent == 1 && ($pwd == $pwd2)) {
-				$sql = "UPDATE Student SET stu_pwd=sha2(:password, 256) WHERE stu_acc = :account";
-			} else if ($isStudent != 1 && ($pwd == $pwd2)){
-				//If it is an instructor and the passwords match; change pwd
-            	$sql = "UPDATE Instructor SET instr_pwd=sha2(:password, 256) WHERE instr_acc = :account";
-        	} else {
-            	print "<p style='color:red;'>Passwords must match</p>";
-        	}
-        
-        	$statement = $dbh->prepare($sql);
-        	$statement->bindParam(":account", $user);
-        	$statement->bindParam(":password", $pwd);
-			$result = $statement->execute();
-            
-			//Set pwd_set to 1
-			if($isStudent == 1) {
-	            $sql = "UPDATE Student SET pwd_set=1 WHERE stu_acc = :account";
-            } else {
-                $sql = "UPDATE Instructor SET pwd_set=1 WHERE instr_acc = :account";
-            }
-			$statement = $dbh->prepare($sql);
-			$statement->bindParam(":account", $user);
-			$result = $statement->execute();
-			$dbh->commit();
-			$dbh = null;
-
-			if(isStudent($user) == 1) {
-				header("LOCATION:student.php");
-			} else {
-				header("LOCATION:instructor.php");
-			}
-		} catch(PDOException $e) {
-			$dbh->rollBack();
-			print "Error: ". $e->getMessage() . "<br/>";
-			die();
-		}
-	return;
-}
-
     // Determine whether a Student can take the survey.
     function checkStudentCanTakeSurvey($studentAccount, $courseID)
     {
@@ -444,7 +437,6 @@ function isFirstLogin() {
                 print("ERROR: You have already completed the survey for $courseID at $row[2]");
                 return FALSE;
             }
-
             return TRUE;
         }
         catch (PDOException $e) 
@@ -455,3 +447,4 @@ function isFirstLogin() {
     }
 
 ?>
+

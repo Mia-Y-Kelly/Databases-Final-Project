@@ -47,16 +47,3 @@ call createChoice(2, 'C', "I don't know");
 
 call createQuestion('FR', 3, "Anything you like about the teaching of the course?");
 call createChoice(3, NULL, "Anything you like about the teaching of the course?" );
--- call createQuestion('FR', 4, "Any suggestions to improve this course?");
--- call createChoice(4, NULL, "Any suggestions to improve this course?");
-
--- Assign instructors
-call assignInstructor("Alice", "CS2311");
-call assignInstructor("Aaron", "CS1142");
-call assignInstructor("Al", "CS2321");
-
--- TBH I'M NOT SURE IF I HAD TO DO THIS STEP
--- grant select, insert, update, delete on Student to 'mykelly'@'%';
--- grant select, insert, update, delete on Student to 'mykelly'@'localhost';
--- grant select, insert, update, delete on Instructor to 'mykelly'@'%';
--- grant select, insert, update, delete on Instructor to 'mykelly'@'localhost';

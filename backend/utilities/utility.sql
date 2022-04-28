@@ -1,6 +1,6 @@
 /* Add users for the testing; the names are the same as the ones we will need in the final project */
 -- use mykelly;
-use mykelly;
+use annikapr;
 
 -- Clear Student table
 delete from Choice limit 100;

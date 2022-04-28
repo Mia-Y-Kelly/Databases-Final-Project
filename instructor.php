@@ -117,6 +117,10 @@
 						foreach($all_q as $full_q) {
 							// Print out the question
 							echo "<h3>".$full_q[1]." ".$full_q[2]."</h3>";
+
+							// Initialize the choice and freq arrays for this question.
+							$choiceArray = array();
+							$freqArray = array();
 							
 							// Print out the Multiple Choice Questions
 							if($full_q[0] == "MC") {
@@ -147,9 +151,45 @@
 									// Calculate the frequency of the option
 									$freq = round(($total_op / $total_res * 100), 0);
 									echo "<tr><td>".stripslashes($q[1])."</td><td>".$total_op."</td><td>".$freq.".00%<td></tr>";
+
+									// Push the current choice and frequency to the arrays.
+									array_push($choiceArray, $q[1]);
+									array_push($freqArray, $freq);
+									
 								}
 								echo "</table>";
-							} else {
+
+								?>
+								<html>
+								<head>
+									<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+									<script type="text/javascript">
+									google.charts.load('current', {'packages':['corechart']});
+									google.charts.setOnLoadCallback(drawChart);
+
+									function drawChart() {
+
+										var dataTable = google.visualization.arrayToDataTable([
+										['Choice', 'Frequency'],
+										[$choiceArray[0], $freqArray[0]]
+										]);
+
+										var options = {
+										title: 'Course Survey Results Chart'
+										};
+
+										var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+
+										chart.draw(dataTable, options);
+									}
+									</script>
+								</head>
+								<body>
+									<div id="piechart" style="width: 900px; height: 500px;"></div>
+								</body>
+								</html>
+								<?php
+						} else {
 							// Print out the Free Response questions
 								echo "<table>";
 								foreach($essay as $response) {
@@ -171,4 +211,3 @@
 		</form>
     </body>
 </html>
-

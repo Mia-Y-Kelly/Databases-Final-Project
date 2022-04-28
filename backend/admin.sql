@@ -1,4 +1,5 @@
-use mykelly;
+-- use mykelly;
+use annikapr;
 
 drop table if exists Teaches;
 drop table if exists Takes;
